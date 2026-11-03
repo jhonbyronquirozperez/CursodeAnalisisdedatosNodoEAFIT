@@ -1,0 +1,235 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Placeholder from '../../components/Placeholder.astro';
+import EstadoTag from '../../components/EstadoTag.astro';
+import Progreso from '../../components/Progreso.astro';
+import ListaEnlaces from '../../components/ListaEnlaces.astro';
+import NavPrevSig from '../../components/NavPrevSig.astro';
+import {
+  obtenerCurso,
+  urlModulo,
+  urlLeccion,
+  numeroLeccion,
+  dosDigitos,
+  estaVacio,
+  url,
+} from '../../lib/curso';
+import { estiloModulo } from '../../lib/colores';
+
+export async function getStaticPaths() {
+  const modulos = await obtenerCurso();
+  return modulos.map((modulo, i) => ({
+    params: { modulo: modulo.id },
+    props: { modulo, anterior: modulos[i - 1], siguiente: modulos[i + 1] },
+  }));
+}
+
+const { modulo, anterior, siguiente } = Astro.props;
+const { titulo, orden, descripcion, duracion, objetivos, recursos } = modulo.data;
+const { Content } = await render(modulo);
+const practicaVacia = estaVacio(modulo.body);
+---
+
+<BaseLayout titulo={titulo} descripcion={descripcion} moduloActual={modulo.id}>
+  <div data-color style={estiloModulo(modulo.id)}>
+    <header class="cabecera-modulo">
+      <p class="sobretitulo">Módulo {dosDigitos(orden)}</p>
+      <h1>{titulo}</h1>
+      {descripcion ? <p class="descripcion">{descripcion}</p> : <Placeholder texto="Descripción del módulo por agregar" />}
+      <dl class="meta">
+        <div>
+          <dt>Duración</dt>
+          <dd class:list={{ 'por-definir': !duracion }}>{duracion || 'Por definir'}</dd>
+        </div>
+        <div>
+          <dt>Lecciones listas</dt>
+          <dd>
+            <span>{modulo.listas} de {modulo.lecciones.length}</span>
+            <Progreso listas={modulo.listas} total={modulo.lecciones.length} />
+          </dd>
+        </div>
+      </dl>
+    </header>
+
+    <section aria-labelledby="objetivos">
+      <h2 id="objetivos">Objetivos</h2>
+      {
+        objetivos.length > 0 ? (
+          <ul class="objetivos">
+            {objetivos.map((o) => (
+              <li>{o}</li>
+            ))}
+          </ul>
+        ) : (
+          <Placeholder texto="Objetivos por agregar" />
+        )
+      }
+    </section>
+
+    <section aria-labelledby="lecciones">
+      <h2 id="lecciones">Lecciones</h2>
+      {
+        modulo.lecciones.length > 0 ? (
+          <ol class="lecciones">
+            {modulo.lecciones.map((l) => (
+              <li>
+                <span class="num-leccion">{numeroLeccion(modulo, l)}</span>
+                <a href={urlLeccion(modulo, l)}>{l.data.titulo}</a>
+                <EstadoTag estado={l.data.estado} />
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <Placeholder texto="Lecciones por agregar" />
+        )
+      }
+    </section>
+
+    <section aria-labelledby="recursos">
+      <h2 id="recursos">Recursos</h2>
+      <ListaEnlaces enlaces={recursos} vacio="Recursos por agregar" />
+    </section>
+
+    <section aria-labelledby="practica">
+      <h2 id="practica">Práctica</h2>
+      {
+        practicaVacia ? (
+          <Placeholder texto="Práctica por agregar" />
+        ) : (
+          <div class="prosa">
+            <Content />
+          </div>
+        )
+      }
+    </section>
+
+    <NavPrevSig
+      nombre="Navegación entre módulos"
+      anterior={anterior && {
+        href: urlModulo(anterior),
+        etiqueta: `Módulo ${dosDigitos(anterior.data.orden)}`,
+        titulo: anterior.data.titulo,
+      }}
+      siguiente={siguiente && {
+        href: urlModulo(siguiente),
+        etiqueta: `Módulo ${dosDigitos(siguiente.data.orden)}`,
+        titulo: siguiente.data.titulo,
+      }}
+      centro={{ href: url(), texto: 'Inicio' }}
+    />
+  </div>
+</BaseLayout>
+
+<style>
+  .cabecera-modulo {
+    position: relative;
+    padding: 1.75rem 1.75rem 1.5rem;
+    background:
+      linear-gradient(125deg, var(--mod-fondo), transparent 65%),
+      var(--fondo-elevado);
+    border: 1px solid var(--mod-borde);
+    border-top: 3px solid var(--mod);
+    box-shadow: 0 20px 60px -30px var(--mod);
+  }
+  /* Esquina tipo HUD */
+  .cabecera-modulo::after {
+    content: '';
+    position: absolute;
+    right: -1px;
+    bottom: -1px;
+    width: 18px;
+    height: 18px;
+    border-right: 2px solid var(--mod);
+    border-bottom: 2px solid var(--mod);
+  }
+  .cabecera-modulo h1 {
+    text-shadow: 0 0 30px color-mix(in srgb, var(--mod) 30%, transparent);
+  }
+  .descripcion {
+    font-size: 1.15rem;
+    margin: 0;
+    max-width: 42rem;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 2.5rem;
+    margin: 1.25rem 0 0;
+  }
+  .meta dt {
+    font-family: var(--fuente-codigo);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--texto-suave);
+  }
+  .meta dd {
+    margin: 0.15rem 0 0;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .meta dd :global(.progreso) {
+    width: 8rem;
+  }
+  .objetivos {
+    padding-left: 1.25rem;
+    margin: 0;
+  }
+  .objetivos li::marker {
+    color: var(--mod);
+  }
+  .lecciones {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--borde);
+    background: var(--fondo-elevado);
+  }
+  .lecciones li {
+    transition: background-color 0.2s;
+  }
+  .lecciones li:hover {
+    background: var(--mod-fondo);
+  }
+  .lecciones li {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr auto;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+  }
+  .lecciones li + li {
+    border-top: 1px solid var(--borde);
+  }
+  .num-leccion {
+    font-family: var(--fuente-codigo);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--mod);
+  }
+  .lecciones a {
+    font-weight: 600;
+    color: var(--texto);
+    text-decoration: none;
+  }
+  .lecciones a:hover {
+    text-decoration: underline;
+    color: var(--mod);
+  }
+
+  @media (max-width: 560px) {
+    .cabecera-modulo {
+      padding: 1.25rem 1rem 1rem;
+    }
+    .lecciones li {
+      grid-template-columns: 2.25rem 1fr;
+    }
+    .lecciones li :global(.estado) {
+      grid-column: 2;
+      justify-self: start;
+    }
+  }
+</style>

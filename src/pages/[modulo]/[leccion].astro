@@ -1,0 +1,119 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Placeholder from '../../components/Placeholder.astro';
+import EstadoTag from '../../components/EstadoTag.astro';
+import ListaEnlaces from '../../components/ListaEnlaces.astro';
+import NavPrevSig from '../../components/NavPrevSig.astro';
+import {
+  obtenerCurso,
+  slugLeccion,
+  urlModulo,
+  urlLeccion,
+  numeroLeccion,
+  dosDigitos,
+  estaVacio,
+  url,
+} from '../../lib/curso';
+import { estiloModulo } from '../../lib/colores';
+
+export async function getStaticPaths() {
+  const modulos = await obtenerCurso();
+  // Todas las lecciones en orden, para enlazar anterior/siguiente entre módulos
+  const todas = modulos.flatMap((modulo) => modulo.lecciones.map((leccion) => ({ modulo, leccion })));
+  return todas.map(({ modulo, leccion }, i) => ({
+    params: { modulo: modulo.id, leccion: slugLeccion(leccion) },
+    props: { modulo, leccion, anterior: todas[i - 1], siguiente: todas[i + 1] },
+  }));
+}
+
+const { modulo, leccion, anterior, siguiente } = Astro.props;
+const { titulo, estado, enlaces } = leccion.data;
+const { Content } = await render(leccion);
+const vacio = estaVacio(leccion.body);
+---
+
+<BaseLayout titulo={titulo} moduloActual={modulo.id} leccionActual={leccion.id}>
+  <div data-color style={estiloModulo(modulo.id)}>
+    <nav class="migas" aria-label="Ruta de navegación">
+      <ol>
+        <li><a href={url()}>Inicio</a></li>
+        <li><a href={urlModulo(modulo)}>Módulo {dosDigitos(modulo.data.orden)}: {modulo.data.titulo}</a></li>
+        <li aria-current="page">Lección {numeroLeccion(modulo, leccion)}</li>
+      </ol>
+    </nav>
+
+    <header class="cabecera-leccion">
+      <p class="sobretitulo">Lección {numeroLeccion(modulo, leccion)}</p>
+      <h1>{titulo}</h1>
+      <EstadoTag estado={estado} />
+    </header>
+
+    <article class="prosa">
+      {vacio ? <Placeholder texto="Contenido por agregar" /> : <Content />}
+    </article>
+
+    <section aria-labelledby="enlaces">
+      <h2 id="enlaces">Enlaces de la lección</h2>
+      <ListaEnlaces enlaces={enlaces} vacio="Enlaces por agregar" />
+    </section>
+
+    <NavPrevSig
+      nombre="Navegación entre lecciones"
+      anterior={anterior && {
+        href: urlLeccion(anterior.modulo, anterior.leccion),
+        etiqueta: `Lección ${numeroLeccion(anterior.modulo, anterior.leccion)}`,
+        titulo: anterior.leccion.data.titulo,
+      }}
+      siguiente={siguiente && {
+        href: urlLeccion(siguiente.modulo, siguiente.leccion),
+        etiqueta: `Lección ${numeroLeccion(siguiente.modulo, siguiente.leccion)}`,
+        titulo: siguiente.leccion.data.titulo,
+      }}
+      centro={{ href: urlModulo(modulo), texto: '↑ Volver al módulo' }}
+    />
+  </div>
+</BaseLayout>
+
+<style>
+  .migas ol {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.5rem;
+    margin: 0 0 1.5rem;
+    padding: 0;
+    font-size: 0.9rem;
+    color: var(--texto-suave);
+  }
+  .migas li + li::before {
+    content: '/';
+    margin-right: 0.5rem;
+    color: var(--borde-fuerte);
+  }
+  .migas a {
+    color: var(--texto-suave);
+  }
+  .migas a:hover {
+    color: var(--mod);
+  }
+  .cabecera-leccion {
+    position: relative;
+    padding-bottom: 1.5rem;
+    margin-bottom: 2.25rem;
+  }
+  /* Línea de neón con el color del módulo */
+  .cabecera-leccion::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--mod), transparent);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--mod) 60%, transparent);
+  }
+  .cabecera-leccion h1 {
+    margin-bottom: 0.75rem;
+  }
+</style>

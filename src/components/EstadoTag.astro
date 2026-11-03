@@ -1,0 +1,36 @@
+---
+// Etiqueta de estado de una lección. Usa el color del módulo más cercano (data-color).
+interface Props {
+  estado: 'por-preparar' | 'lista';
+}
+const { estado } = Astro.props;
+const texto = estado === 'lista' ? 'Lista' : 'Por preparar';
+---
+
+<span class:list={['estado', estado]}>{texto}</span>
+
+<style>
+  .estado {
+    display: inline-block;
+    font-family: var(--fuente-codigo);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding: 0.15rem 0.5rem;
+    border-radius: 2px;
+    text-transform: uppercase;
+    border: 1.5px solid var(--mod, var(--texto-suave));
+    white-space: nowrap;
+  }
+  .lista {
+    background: var(--mod, var(--lima));
+    border-color: var(--mod, var(--lima));
+    color: var(--fondo);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--mod, var(--lima)) 45%, transparent);
+  }
+  .por-preparar {
+    border-style: dashed;
+    color: var(--texto-suave);
+    border-color: var(--borde-fuerte);
+  }
+</style>

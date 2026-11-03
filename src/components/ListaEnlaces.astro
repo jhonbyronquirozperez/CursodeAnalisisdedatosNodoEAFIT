@@ -1,0 +1,57 @@
+---
+import Placeholder from './Placeholder.astro';
+
+interface Props {
+  enlaces: { texto: string; url: string }[];
+  vacio: string;
+}
+const { enlaces, vacio } = Astro.props;
+const esExterno = (u: string) => /^https?:\/\//.test(u);
+---
+
+{
+  enlaces.length === 0 ? (
+    <Placeholder texto={vacio} />
+  ) : (
+    <ul class="enlaces">
+      {enlaces.map((e) => (
+        <li>
+          <a
+            href={e.url}
+            {...(esExterno(e.url) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+          >
+            {e.texto}
+            {esExterno(e.url) && <span class="sr-only"> (se abre en otra pestaña)</span>}
+          </a>
+          {esExterno(e.url) && <span class="dominio">{new URL(e.url).hostname}</span>}
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+<style>
+  .enlaces {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+  li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 0.75rem;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid var(--borde);
+    border-left: 3px solid var(--mod, var(--borde-fuerte));
+    border-radius: var(--radio);
+    background: var(--fondo-elevado);
+  }
+  .dominio {
+    font-family: var(--fuente-codigo);
+    font-size: 0.75rem;
+    color: var(--texto-suave);
+  }
+</style>

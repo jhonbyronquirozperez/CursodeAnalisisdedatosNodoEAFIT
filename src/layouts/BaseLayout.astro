@@ -1,0 +1,289 @@
+---
+import '../styles/global.css';
+import Sidebar from '../components/Sidebar.astro';
+import { curso } from '../config/curso';
+import { obtenerCurso, url } from '../lib/curso';
+
+interface Props {
+  titulo?: string;
+  descripcion?: string;
+  moduloActual?: string;
+  leccionActual?: string;
+  /** Página sin barra lateral y a todo el ancho (portada) */
+  completo?: boolean;
+}
+const { titulo, descripcion, moduloActual, leccionActual, completo = false } = Astro.props;
+const tituloPagina = titulo ? `${titulo} · ${curso.titulo}` : curso.titulo;
+const descripcionPagina = descripcion || curso.descripcion || curso.lema;
+
+const modulos = await obtenerCurso();
+const total = modulos.reduce((s, m) => s + m.lecciones.length, 0);
+const listas = modulos.reduce((s, m) => s + m.listas, 0);
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={descripcionPagina} />
+    <meta name="theme-color" content="#08090a" />
+    <title>{tituloPagina}</title>
+    <link rel="icon" type="image/svg+xml" href={url('favicon.svg')} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=JetBrains+Mono:wght@400;600&family=Source+Sans+3:ital,wght@0,400..700;1,400..700&display=swap"
+    />
+  </head>
+  <body>
+    <a class="saltar" href="#contenido">Saltar al contenido</a>
+
+    <header class="cabecera">
+      <div class="cabecera-interna">
+        <a class="marca" href={url()}>
+          <svg class="logo" viewBox="0 0 32 32" aria-hidden="true">
+            <path d="M16 3.5 27 9.75v12.5L16 28.5 5 22.25V9.75z" fill="none" stroke="currentColor" stroke-width="1.6"></path>
+            <rect x="10" y="17" width="3" height="6" fill="var(--naranja)"></rect>
+            <rect x="14.5" y="13" width="3" height="10" fill="var(--lima)"></rect>
+            <rect x="19" y="10" width="3" height="13" fill="var(--cian)"></rect>
+          </svg>
+          <span>{curso.titulo}</span>
+        </a>
+        <nav class="nav-principal" aria-label="Principal">
+          <ul>
+            <li><a href={url('#modulos')}>Módulos</a></li>
+            <li><a href={url('#instructor')}>Instructor</a></li>
+          </ul>
+        </nav>
+        <p class="estado-curso">
+          <span class="punto" aria-hidden="true"></span>
+          {listas}/{total}<span class="estado-texto">&nbsp;lecciones listas</span>
+        </p>
+      </div>
+    </header>
+
+    {
+      completo ? (
+        <main id="contenido" tabindex="-1" class="completo">
+          <slot />
+        </main>
+      ) : (
+        <div class="marco">
+          <aside class="columna-lateral">
+            <Sidebar moduloActual={moduloActual} leccionActual={leccionActual} />
+          </aside>
+          <main id="contenido" tabindex="-1">
+            <slot />
+          </main>
+        </div>
+      )
+    }
+
+    <footer class="pie">
+      <div class="pie-interno">
+        <p class="pie-marca">{curso.titulo}</p>
+        <p>
+          Curso a cargo de <a href={curso.instructor.sitio}>{curso.instructor.nombre}</a>
+        </p>
+        <p class="pie-sistema" aria-hidden="true">&gt; status: online_</p>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style>
+  .cabecera {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgb(8 9 10 / 0.82);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--borde);
+  }
+  /* Línea de neón inferior */
+  .cabecera::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--naranja) 20%, var(--rosa) 50%, var(--cian) 80%, transparent);
+    opacity: 0.6;
+  }
+  .cabecera-interna {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    max-width: 82rem;
+    margin: 0 auto;
+    padding: 0.75rem 1.5rem;
+  }
+  .marca {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--fuente-titulos);
+    font-weight: 800;
+    font-size: 1.05rem;
+    letter-spacing: -0.01em;
+    color: var(--texto);
+    text-decoration: none;
+  }
+  .logo {
+    width: 1.7rem;
+    height: 1.7rem;
+    color: var(--cian);
+    flex: none;
+  }
+  .nav-principal {
+    margin-left: auto;
+  }
+  .nav-principal ul {
+    display: flex;
+    gap: 1.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .nav-principal a {
+    font-family: var(--fuente-codigo);
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--texto-suave);
+    text-decoration: none;
+  }
+  .nav-principal a:hover {
+    color: var(--cian);
+  }
+  .estado-curso {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0.3rem 0.7rem;
+    border: 1px solid var(--borde-fuerte);
+    font-family: var(--fuente-codigo);
+    font-size: 0.72rem;
+    color: var(--texto-suave);
+    white-space: nowrap;
+  }
+  .punto {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: var(--lima);
+    box-shadow: 0 0 8px var(--lima);
+    animation: latido 2.4s ease-in-out infinite;
+  }
+  @keyframes latido {
+    50% {
+      opacity: 0.35;
+    }
+  }
+
+  .marco {
+    display: grid;
+    grid-template-columns: var(--ancho-lateral) minmax(0, 1fr);
+    gap: 3rem;
+    max-width: 82rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+  .columna-lateral {
+    position: sticky;
+    top: 3.6rem;
+    align-self: start;
+    max-height: calc(100vh - 3.6rem);
+    overflow-y: auto;
+    padding: 2rem 0.25rem 2rem 0;
+    scrollbar-width: thin;
+  }
+  main {
+    min-width: 0;
+    max-width: var(--ancho-contenido);
+    padding: 2.25rem 0 4rem;
+  }
+  main.completo {
+    max-width: none;
+    padding: 0;
+  }
+  main:focus {
+    outline: none;
+  }
+
+  .pie {
+    position: relative;
+    margin-top: 2rem;
+    border-top: 1px solid var(--borde);
+    background: var(--fondo-elevado);
+    color: var(--texto-suave);
+    font-size: 0.92rem;
+  }
+  .pie-interno {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 2rem;
+    max-width: 82rem;
+    margin: 0 auto;
+    padding: 1.5rem;
+  }
+  .pie p {
+    margin: 0;
+  }
+  .pie-marca {
+    font-family: var(--fuente-titulos);
+    font-weight: 800;
+    color: var(--texto);
+  }
+  .pie-sistema {
+    margin-left: auto !important;
+    font-family: var(--fuente-codigo);
+    font-size: 0.75rem;
+    color: var(--lima);
+  }
+
+  @media (max-width: 900px) {
+    .cabecera-interna {
+      padding: 0.65rem 1rem;
+      gap: 1rem;
+    }
+    .marco {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+      padding: 0 1rem;
+    }
+    .columna-lateral {
+      position: static;
+      max-height: none;
+      overflow: visible;
+      padding: 0.75rem 0 0;
+      border-bottom: 1px solid var(--borde);
+    }
+    main {
+      padding-top: 1.5rem;
+    }
+    .pie-interno {
+      padding: 1.25rem 1rem;
+    }
+  }
+  /* En celular el texto se oculta a la vista pero sigue disponible para lectores de pantalla */
+  @media (max-width: 640px) {
+    .estado-texto,
+    .marca span {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+    }
+    .nav-principal ul {
+      gap: 0.9rem;
+    }
+  }
+</style>

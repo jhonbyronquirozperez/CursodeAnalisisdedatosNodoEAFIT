@@ -1,0 +1,91 @@
+---
+// Banda decorativa con los temas del curso desplazándose en bucle.
+const temas = [
+  'SQL',
+  'JOINs',
+  'CTEs',
+  'Funciones de ventana',
+  'Power BI',
+  'DAX',
+  'Python',
+  'pandas',
+  'seaborn',
+  'EDA',
+  'BigQuery',
+  'Snowflake',
+  'Redshift',
+  'ETL / ELT',
+  'Esquema estrella',
+  'Machine learning',
+  'Prompts',
+];
+---
+
+<div class="zona" aria-hidden="true">
+  <div class="ticker">
+    <div class="pista">
+      {
+        [0, 1].map(() => (
+          <ul>
+            {temas.map((t) => (
+              <li>{t}</li>
+            ))}
+          </ul>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Recorta la banda inclinada para que no genere desplazamiento horizontal */
+  .zona {
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    margin-top: -1.6rem;
+    padding: 1rem 0;
+  }
+  .ticker {
+    overflow: hidden;
+    width: 106%;
+    margin-left: -3%;
+    background: var(--lima);
+    color: var(--fondo);
+    transform: rotate(-1.2deg);
+    border-block: 2px solid var(--fondo);
+    box-shadow: 0 0 40px rgb(203 255 61 / 0.25);
+  }
+  .pista {
+    display: flex;
+    width: max-content;
+    animation: desplazar 45s linear infinite;
+  }
+  .ticker:hover .pista {
+    animation-play-state: paused;
+  }
+  ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  li {
+    padding: 0.7rem 0;
+    font-family: var(--fuente-codigo);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  li::after {
+    content: '✦';
+    margin: 0 1.4rem;
+  }
+  @keyframes desplazar {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+</style>

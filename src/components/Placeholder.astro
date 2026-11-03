@@ -1,0 +1,34 @@
+---
+// Recuadro punteado que indica qué contenido falta en una sección.
+interface Props {
+  texto?: string;
+}
+const { texto = 'Contenido por agregar' } = Astro.props;
+---
+
+<div class="vacio" role="note">
+  <span class="vacio-etiqueta" aria-hidden="true">-- NULL</span>
+  <p>{texto}</p>
+</div>
+
+<style>
+  .vacio {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    border: 1px dashed var(--borde-fuerte);
+    border-radius: var(--radio);
+    padding: 1rem 1.25rem;
+    color: var(--texto-suave);
+    background: repeating-linear-gradient(-45deg, transparent 0 10px, rgb(255 255 255 / 0.015) 10px 20px), var(--fondo-elevado);
+  }
+  .vacio p {
+    margin: 0;
+  }
+  .vacio-etiqueta {
+    font-family: var(--fuente-codigo);
+    font-size: 0.8rem;
+    color: var(--mod, var(--cian));
+  }
+</style>

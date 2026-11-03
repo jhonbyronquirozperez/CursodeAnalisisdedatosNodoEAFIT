@@ -1,0 +1,101 @@
+---
+// Navegación "anterior / siguiente" al pie de módulos y lecciones.
+interface Destino {
+  href: string;
+  etiqueta: string;
+  titulo: string;
+}
+interface Props {
+  anterior?: Destino;
+  siguiente?: Destino;
+  centro?: { href: string; texto: string };
+  nombre: string;
+}
+const { anterior, siguiente, centro, nombre } = Astro.props;
+---
+
+<nav class="prevsig" aria-label={nombre}>
+  {
+    anterior ? (
+      <a class="caja anterior" href={anterior.href} rel="prev">
+        <span class="dir">← {anterior.etiqueta}</span>
+        <span class="tit">{anterior.titulo}</span>
+      </a>
+    ) : (
+      <span />
+    )
+  }
+  {centro && <a class="centro" href={centro.href}>{centro.texto}</a>}
+  {
+    siguiente ? (
+      <a class="caja siguiente" href={siguiente.href} rel="next">
+        <span class="dir">{siguiente.etiqueta} →</span>
+        <span class="tit">{siguiente.titulo}</span>
+      </a>
+    ) : (
+      <span />
+    )
+  }
+</nav>
+
+<style>
+  .prevsig {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 1rem;
+    align-items: center;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--borde);
+  }
+  .caja {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio);
+    text-decoration: none;
+    color: var(--texto);
+    background: var(--fondo-elevado);
+  }
+  .caja {
+    transition:
+      border-color 0.2s,
+      background-color 0.2s;
+  }
+  .caja:hover {
+    border-color: var(--mod, var(--cian));
+    background: var(--mod-fondo, var(--fondo-suave));
+  }
+  .siguiente {
+    text-align: right;
+  }
+  .dir {
+    font-family: var(--fuente-codigo);
+    font-size: 0.75rem;
+    color: var(--texto-suave);
+  }
+  .tit {
+    font-weight: 600;
+  }
+  .centro {
+    font-family: var(--fuente-codigo);
+    font-size: 0.8rem;
+    text-align: center;
+  }
+  @media (max-width: 640px) {
+    .prevsig {
+      grid-template-columns: 1fr;
+    }
+    .siguiente {
+      text-align: left;
+    }
+    .centro {
+      order: 3;
+    }
+    .prevsig > span:empty {
+      display: none;
+    }
+  }
+</style>
