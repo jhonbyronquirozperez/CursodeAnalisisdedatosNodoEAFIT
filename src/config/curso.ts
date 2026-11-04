@@ -14,9 +14,9 @@ export const curso = {
   // La foto está en src/assets/instructor.webp (reemplázala por otra con el mismo nombre)
   instructor: {
     nombre: 'Jhon Byron Quiroz',
-    rol: 'Desarrollador full-stack con enfoque IA-first',
+    rol: 'Ingeniero de Datos',
     // Presentación corta para la sección "Instructor" de la portada
-    bio: '',
+    bio: 'Ingeniero de datos con experiencia en análisis de datos, visualización y desarrollo de soluciones basadas en inteligencia artificial. Apasionado por transformar datos en información valiosa para la toma de decisiones.',
     sitio: 'https://www.jhonbyron.site/',
     github: 'https://github.com/jhonbyronquirozperez',
     linkedin: '',
