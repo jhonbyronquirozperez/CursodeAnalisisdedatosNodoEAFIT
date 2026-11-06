@@ -3,7 +3,7 @@ import { render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Placeholder from '../../components/Placeholder.astro';
 import EstadoTag from '../../components/EstadoTag.astro';
-import ListaEnlaces from '../../components/ListaEnlaces.astro';
+import Actividad from '../../components/Actividad.astro';
 import NavPrevSig from '../../components/NavPrevSig.astro';
 import {
   obtenerCurso,
@@ -13,6 +13,7 @@ import {
   numeroLeccion,
   dosDigitos,
   estaVacio,
+  actividadesDe,
   url,
 } from '../../lib/curso';
 import { estiloModulo } from '../../lib/colores';
@@ -28,9 +29,10 @@ export async function getStaticPaths() {
 }
 
 const { modulo, leccion, anterior, siguiente } = Astro.props;
-const { titulo, estado, enlaces } = leccion.data;
+const { titulo, estado } = leccion.data;
 const { Content } = await render(leccion);
 const vacio = estaVacio(leccion.body);
+const actividades = await actividadesDe(leccion);
 ---
 
 <BaseLayout titulo={titulo} moduloActual={modulo.id} leccionActual={leccion.id}>
@@ -53,9 +55,15 @@ const vacio = estaVacio(leccion.body);
       {vacio ? <Placeholder texto="Contenido por agregar" /> : <Content />}
     </article>
 
-    <section aria-labelledby="enlaces">
-      <h2 id="enlaces">Enlaces de la lección</h2>
-      <ListaEnlaces enlaces={enlaces} vacio="Enlaces por agregar" />
+    <section aria-labelledby="actividades">
+      <h2 id="actividades">Actividades de la lección</h2>
+      {
+        actividades.length === 0 ? (
+          <Placeholder texto="Actividades por agregar" />
+        ) : (
+          actividades.map((a) => <Actividad actividad={a} />)
+        )
+      }
     </section>
 
     <NavPrevSig

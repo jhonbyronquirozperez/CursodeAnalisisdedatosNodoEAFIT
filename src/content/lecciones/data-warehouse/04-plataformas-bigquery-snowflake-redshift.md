@@ -3,9 +3,6 @@ titulo: "Plataformas: BigQuery, Snowflake, Redshift"
 modulo: data-warehouse
 orden: 4
 estado: por-preparar
-enlaces: []
-#  - texto: "Nombre del enlace"
-#    url: "https://..."
 ---
 
 <!--

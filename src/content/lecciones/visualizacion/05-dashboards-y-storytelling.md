@@ -3,9 +3,6 @@ titulo: "Dashboards y storytelling"
 modulo: visualizacion
 orden: 5
 estado: por-preparar
-enlaces: []
-#  - texto: "Nombre del enlace"
-#    url: "https://..."
 ---
 
 <!--

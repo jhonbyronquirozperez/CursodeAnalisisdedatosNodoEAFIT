@@ -3,9 +3,6 @@ titulo: "JOINs"
 modulo: sql
 orden: 4
 estado: por-preparar
-enlaces: []
-#  - texto: "Nombre del enlace"
-#    url: "https://..."
 ---
 
 <!--

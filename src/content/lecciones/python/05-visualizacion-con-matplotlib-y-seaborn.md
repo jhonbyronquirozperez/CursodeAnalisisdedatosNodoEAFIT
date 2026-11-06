@@ -3,9 +3,6 @@ titulo: "Visualización con matplotlib y seaborn"
 modulo: python
 orden: 5
 estado: por-preparar
-enlaces: []
-#  - texto: "Nombre del enlace"
-#    url: "https://..."
 ---
 
 <!--

@@ -3,9 +3,6 @@ titulo: "Análisis exploratorio (EDA)"
 modulo: python
 orden: 6
 estado: por-preparar
-enlaces: []
-#  - texto: "Nombre del enlace"
-#    url: "https://..."
 ---
 
 <!--

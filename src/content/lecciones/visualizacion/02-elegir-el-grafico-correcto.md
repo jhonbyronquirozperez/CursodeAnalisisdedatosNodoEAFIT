@@ -3,9 +3,6 @@ titulo: "Elegir el gráfico correcto"
 modulo: visualizacion
 orden: 2
 estado: por-preparar
-enlaces: []
-#  - texto: "Nombre del enlace"
-#    url: "https://..."
 ---
 
 <!--

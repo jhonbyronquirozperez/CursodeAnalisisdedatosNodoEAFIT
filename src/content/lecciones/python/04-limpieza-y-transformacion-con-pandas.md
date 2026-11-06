@@ -3,9 +3,6 @@ titulo: "Limpieza y transformación con pandas"
 modulo: python
 orden: 4
 estado: por-preparar
-enlaces: []
-#  - texto: "Nombre del enlace"
-#    url: "https://..."
 ---
 
 <!--

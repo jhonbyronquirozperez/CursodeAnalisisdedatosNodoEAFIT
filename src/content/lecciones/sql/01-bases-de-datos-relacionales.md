@@ -3,9 +3,6 @@ titulo: "Bases de datos relacionales"
 modulo: sql
 orden: 1
 estado: por-preparar
-enlaces: []
-#  - texto: "Nombre del enlace"
-#    url: "https://..."
 ---
 
 <!--

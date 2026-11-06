@@ -3,9 +3,6 @@ titulo: "pandas: Series y DataFrames"
 modulo: python
 orden: 3
 estado: por-preparar
-enlaces: []
-#  - texto: "Nombre del enlace"
-#    url: "https://..."
 ---
 
 <!--

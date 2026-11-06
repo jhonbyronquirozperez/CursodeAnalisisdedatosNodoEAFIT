@@ -3,9 +3,6 @@ titulo: "Modelado dimensional: esquema estrella"
 modulo: data-warehouse
 orden: 2
 estado: por-preparar
-enlaces: []
-#  - texto: "Nombre del enlace"
-#    url: "https://..."
 ---
 
 <!--

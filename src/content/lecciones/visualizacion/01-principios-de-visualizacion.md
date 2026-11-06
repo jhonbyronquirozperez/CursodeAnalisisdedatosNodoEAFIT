@@ -3,9 +3,6 @@ titulo: "Principios de visualización"
 modulo: visualizacion
 orden: 1
 estado: por-preparar
-enlaces: []
-#  - texto: "Nombre del enlace"
-#    url: "https://..."
 ---
 
 <!--

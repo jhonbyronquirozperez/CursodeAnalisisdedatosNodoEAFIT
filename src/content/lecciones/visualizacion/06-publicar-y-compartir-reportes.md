@@ -3,9 +3,6 @@ titulo: "Publicar y compartir reportes"
 modulo: visualizacion
 orden: 6
 estado: por-preparar
-enlaces: []
-#  - texto: "Nombre del enlace"
-#    url: "https://..."
 ---
 
 <!--

@@ -3,9 +3,6 @@ titulo: "Fundamentos de Python"
 modulo: python
 orden: 2
 estado: por-preparar
-enlaces: []
-#  - texto: "Nombre del enlace"
-#    url: "https://..."
 ---
 
 <!--

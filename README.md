@@ -59,6 +59,8 @@ src/
 │   ├── modulos/             ← un archivo por módulo (fundamentos.md, sql.md…)
 │   └── lecciones/
 │       ├── fundamentos/     ← lecciones del módulo Fundamentos
+│       │   ├── 01-que-es-el-analisis-de-datos.md   ← una lección
+│       │   └── 01-que-es-el-analisis-de-datos/     ← las actividades de esa lección
 │       ├── sql/             ← lecciones del módulo SQL
 │       └── …
 ├── content.config.ts        ← reglas que deben cumplir los archivos (no hace falta tocarlo)
@@ -155,9 +157,6 @@ titulo: "JOINs"
 modulo: sql
 orden: 4
 estado: por-preparar
-enlaces:
-  - texto: "Diagrama visual de los JOIN"
-    url: "https://..."
 ---
 
 ## ¿Qué es un JOIN?
@@ -171,7 +170,6 @@ Un JOIN combina filas de dos tablas…
 | `modulo`  | A qué módulo pertenece. Debe ser el nombre de un archivo de `modulos/` sin `.md`. |
 | `orden`   | Posición dentro del módulo. La lección 4 del módulo 2 se muestra como **2.4**.    |
 | `estado`  | `por-preparar` o `lista` (ver la sección 6).                                      |
-| `enlaces` | Lista de enlaces que aparecen al final de la lección.                             |
 
 Debajo del segundo `---` escribe el contenido de la lección en Markdown. Lo básico:
 
@@ -195,6 +193,55 @@ Texto normal, **negrita**, *cursiva* y `código en línea`.
 | --------- | --------- |
 | 1         | 2         |
 ```
+
+**Tablas en celular.** Hay dos tipos:
+
+- **Tabla de datos** (la normal): en celular sigue siendo tabla y, si no cabe, se desplaza de lado. Para alinear números a la derecha, pon `---:` en la línea de separación de esa columna.
+- **Tabla comparativa:** si dejas vacía la primera celda del encabezado (`| | Columna A | Columna B |`), la primera columna se vuelve el título de cada fila. En celular, cada fila se muestra como una tarjeta, con el nombre de la columna sobre cada dato.
+
+La lección 1.1 tiene un ejemplo de cada una: la comparativa en la lección y la de datos en su actividad.
+
+### Agregar actividades a una lección
+
+Las actividades aparecen al final de la lección, en "Actividades de la lección". Cada actividad es un archivo `.md` dentro de una carpeta que se llama **igual que el archivo de la lección, sin `.md`**:
+
+```
+src/content/lecciones/fundamentos/
+├── 01-que-es-el-analisis-de-datos.md
+└── 01-que-es-el-analisis-de-datos/
+    ├── 01-que-nos-dicen-los-datos.md      ← Actividad 1
+    └── 02-otra-actividad.md               ← Actividad 2
+```
+
+Cada archivo de actividad se ve así:
+
+```markdown
+---
+titulo: "¿Qué nos dicen los datos?"
+orden: 1
+objetivo: "descubrir por qué una buena pregunta es el punto de partida…"
+tiempo: "10 minutos"
+---
+
+Aquí van las instrucciones, en Markdown: texto, listas, tablas, imágenes…
+```
+
+- `titulo` y `orden` son obligatorios. El sitio muestra **Actividad 1: ¿Qué nos dicen los datos?** a partir de ellos.
+- `objetivo` y `tiempo` son opcionales; si los dejas vacíos, no aparecen.
+- Todo lo que escribas debajo del segundo `---` aparece bajo el título "Instrucciones". Si necesitas subtítulos dentro de una actividad, usa `####`.
+- Si una lección no tiene carpeta de actividades, el sitio muestra "Actividades por agregar".
+- Si el nombre de la carpeta no coincide con ninguna lección, `npm run build` muestra un error que dice qué archivo revisar.
+
+### Archivos para descargar (CSV, Excel, PDF…)
+
+1. Copia el archivo en la carpeta `public/descargas/`, por ejemplo `public/descargas/ventas.csv`.
+2. En la lección o actividad, escribe un enlace que empiece por `/descargas/`:
+
+   ```markdown
+   [Descargar los datos (CSV)](/descargas/ventas.csv)
+   ```
+
+El sitio lo muestra como un botón de descarga y agrega solo la carpeta del repositorio cuando publica en GitHub Pages. La actividad 1 de la lección 1.1 tiene un ejemplo.
 
 ### Agregar una lección nueva
 

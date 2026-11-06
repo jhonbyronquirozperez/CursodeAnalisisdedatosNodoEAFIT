@@ -3,9 +3,6 @@ titulo: "Automatización de reportes"
 modulo: ia
 orden: 5
 estado: por-preparar
-enlaces: []
-#  - texto: "Nombre del enlace"
-#    url: "https://..."
 ---
 
 <!--

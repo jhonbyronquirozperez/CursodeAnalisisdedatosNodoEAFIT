@@ -3,9 +3,6 @@ titulo: "Agregaciones con GROUP BY y HAVING"
 modulo: sql
 orden: 3
 estado: por-preparar
-enlaces: []
-#  - texto: "Nombre del enlace"
-#    url: "https://..."
 ---
 
 <!--

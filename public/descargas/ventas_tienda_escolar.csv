@@ -1,0 +1,21 @@
+Dia,Clima,Producto,Unidades_vendidas,Precio_unitario_COP
+Lunes,Soleado,Empanada,30,2500
+Lunes,Soleado,Jugo,35,2000
+Lunes,Soleado,Galletas,42,1500
+Lunes,Soleado,Vaso de fruta,15,3000
+Martes,Lluvioso,Empanada,38,2500
+Martes,Lluvioso,Jugo,18,2000
+Martes,Lluvioso,Galletas,45,1500
+Martes,Lluvioso,Vaso de fruta,8,3000
+Miércoles,Soleado,Empanada,32,2500
+Miércoles,Soleado,Jugo,33,2000
+Miércoles,Soleado,Galletas,40,1500
+Miércoles,Soleado,Vaso de fruta,14,3000
+Jueves,Lluvioso,Empanada,40,2500
+Jueves,Lluvioso,Jugo,20,2000
+Jueves,Lluvioso,Galletas,48,1500
+Jueves,Lluvioso,Vaso de fruta,10,3000
+Viernes,Soleado,Empanada,45,2500
+Viernes,Soleado,Jugo,40,2000
+Viernes,Soleado,Galletas,35,1500
+Viernes,Soleado,Vaso de fruta,18,3000

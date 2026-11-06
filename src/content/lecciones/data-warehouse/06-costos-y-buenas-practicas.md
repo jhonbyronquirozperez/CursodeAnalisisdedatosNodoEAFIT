@@ -3,9 +3,6 @@ titulo: "Costos y buenas prácticas"
 modulo: data-warehouse
 orden: 6
 estado: por-preparar
-enlaces: []
-#  - texto: "Nombre del enlace"
-#    url: "https://..."
 ---
 
 <!--

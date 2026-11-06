@@ -3,9 +3,6 @@ titulo: "Ética, sesgos y privacidad"
 modulo: ia
 orden: 6
 estado: por-preparar
-enlaces: []
-#  - texto: "Nombre del enlace"
-#    url: "https://..."
 ---
 
 <!--

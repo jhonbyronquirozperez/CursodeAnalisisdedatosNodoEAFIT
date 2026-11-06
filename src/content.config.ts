@@ -25,16 +25,28 @@ const modulos = defineCollection({
   }),
 });
 
+// Lecciones: src/content/lecciones/<módulo>/<lección>.md
 const lecciones = defineCollection({
-  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/lecciones' }),
+  loader: glob({ pattern: '*/*.{md,mdx}', base: './src/content/lecciones' }),
   schema: z.object({
     titulo: z.string(),
     // Debe coincidir con el nombre de un archivo de src/content/modulos (sin .md)
     modulo: reference('modulos'),
     orden: z.number().int().positive(),
     estado: z.enum(['por-preparar', 'lista']).default('por-preparar'),
-    enlaces: lista(enlace),
   }),
 });
 
-export const collections = { modulos, lecciones };
+// Actividades: src/content/lecciones/<módulo>/<lección>/<actividad>.md
+// La carpeta se llama igual que el archivo de la lección (sin .md).
+const actividades = defineCollection({
+  loader: glob({ pattern: '*/*/*.{md,mdx}', base: './src/content/lecciones' }),
+  schema: z.object({
+    titulo: z.string(),
+    orden: z.number().int().positive(),
+    objetivo: texto,
+    tiempo: texto,
+  }),
+});
+
+export const collections = { modulos, lecciones, actividades };

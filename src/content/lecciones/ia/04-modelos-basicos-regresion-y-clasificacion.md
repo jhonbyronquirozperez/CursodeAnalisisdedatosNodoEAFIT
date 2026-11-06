@@ -3,9 +3,6 @@ titulo: "Modelos básicos: regresión y clasificación"
 modulo: ia
 orden: 4
 estado: por-preparar
-enlaces: []
-#  - texto: "Nombre del enlace"
-#    url: "https://..."
 ---
 
 <!--

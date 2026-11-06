@@ -3,9 +3,6 @@ titulo: "Ciclo de vida de un proyecto de datos"
 modulo: fundamentos
 orden: 3
 estado: por-preparar
-enlaces: []
-#  - texto: "Nombre del enlace"
-#    url: "https://..."
 ---
 
 <!--

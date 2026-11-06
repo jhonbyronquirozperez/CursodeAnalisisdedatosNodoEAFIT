@@ -3,9 +3,6 @@ titulo: "Prompts para análisis de datos"
 modulo: ia
 orden: 2
 estado: por-preparar
-enlaces: []
-#  - texto: "Nombre del enlace"
-#    url: "https://..."
 ---
 
 <!--

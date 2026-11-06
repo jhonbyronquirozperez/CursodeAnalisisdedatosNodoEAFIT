@@ -3,9 +3,6 @@ titulo: "Carga y orquestación de datos"
 modulo: data-warehouse
 orden: 5
 estado: por-preparar
-enlaces: []
-#  - texto: "Nombre del enlace"
-#    url: "https://..."
 ---
 
 <!--

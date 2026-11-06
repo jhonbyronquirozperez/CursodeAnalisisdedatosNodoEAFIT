@@ -3,9 +3,6 @@ titulo: "Modelado de datos en Power BI"
 modulo: visualizacion
 orden: 3
 estado: por-preparar
-enlaces: []
-#  - texto: "Nombre del enlace"
-#    url: "https://..."
 ---
 
 <!--

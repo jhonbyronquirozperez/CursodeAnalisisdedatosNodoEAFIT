@@ -3,9 +3,6 @@ titulo: "Subconsultas y CTEs"
 modulo: sql
 orden: 5
 estado: por-preparar
-enlaces: []
-#  - texto: "Nombre del enlace"
-#    url: "https://..."
 ---
 
 <!--

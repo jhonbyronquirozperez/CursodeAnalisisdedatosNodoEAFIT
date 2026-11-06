@@ -3,9 +3,6 @@ titulo: "Hojas de cálculo para análisis"
 modulo: fundamentos
 orden: 6
 estado: por-preparar
-enlaces: []
-#  - texto: "Nombre del enlace"
-#    url: "https://..."
 ---
 
 <!--

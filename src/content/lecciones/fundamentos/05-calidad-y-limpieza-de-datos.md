@@ -3,9 +3,6 @@ titulo: "Calidad y limpieza de datos"
 modulo: fundamentos
 orden: 5
 estado: por-preparar
-enlaces: []
-#  - texto: "Nombre del enlace"
-#    url: "https://..."
 ---
 
 <!--

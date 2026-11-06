@@ -1,0 +1,113 @@
+---
+// Una actividad de la lección: título, objetivo, tiempo e instrucciones.
+// El contenido viene de src/content/lecciones/<módulo>/<lección>/<actividad>.md
+import { render } from 'astro:content';
+import type { Actividad } from '../lib/curso';
+import { estaVacio } from '../lib/curso';
+
+interface Props {
+  actividad: Actividad;
+}
+const { actividad } = Astro.props;
+const { titulo, orden, objetivo, tiempo } = actividad.data;
+const { Content } = await render(actividad);
+const id = `actividad-${orden}`;
+---
+
+<article class="actividad" aria-labelledby={id}>
+  <h3 id={id}>
+    <span class="etiqueta">Actividad {orden}:</span>{' '}{titulo}
+  </h3>
+
+  {
+    (objetivo || tiempo) && (
+      <div class="meta">
+        {objetivo && (
+          <p>
+            <span class="meta-etiqueta">Objetivo:</span> {objetivo}
+          </p>
+        )}
+        {tiempo && (
+          <p>
+            <span class="meta-etiqueta">Tiempo:</span> {tiempo}
+          </p>
+        )}
+      </div>
+    )
+  }
+
+  {
+    !estaVacio(actividad.body) && (
+      <>
+        <h4>Instrucciones</h4>
+        <div class="prosa">
+          <Content />
+        </div>
+      </>
+    )
+  }
+</article>
+
+<style>
+  .actividad {
+    position: relative;
+    padding: 1.5rem 1.5rem 0.5rem;
+    border: 1px solid var(--borde);
+    border-top: 2px solid var(--mod, var(--cian));
+    background: var(--fondo-elevado);
+  }
+  .actividad + .actividad {
+    margin-top: 1.5rem;
+  }
+  h3 {
+    margin: 0 0 1rem;
+    font-size: 1.35rem;
+    line-height: 1.25;
+  }
+  .etiqueta {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-family: var(--fuente-codigo);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--mod, var(--cian));
+  }
+  .meta {
+    display: grid;
+    gap: 0.35rem;
+    margin-bottom: 1.25rem;
+    padding: 0.75rem 1rem;
+    border-left: 3px solid var(--mod, var(--cian));
+    background: var(--mod-fondo, var(--fondo-suave));
+  }
+  .meta p {
+    margin: 0;
+  }
+  .meta-etiqueta {
+    font-weight: 700;
+    color: #ffffff;
+  }
+  /* Las tablas usan todo el ancho de la tarjeta; el texto, un ancho cómodo de lectura */
+  .actividad .prosa {
+    max-width: none;
+  }
+  .actividad .prosa > :global(:not(table)) {
+    max-width: 72ch;
+  }
+  h4 {
+    margin: 0 0 0.75rem;
+    font-family: var(--fuente-codigo);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--texto-suave);
+  }
+  @media (max-width: 560px) {
+    .actividad {
+      padding: 1.1rem 0.9rem 0.25rem;
+    }
+  }
+</style>

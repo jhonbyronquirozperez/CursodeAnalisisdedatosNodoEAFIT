@@ -3,9 +3,6 @@ titulo: "Entorno de trabajo: Jupyter y Colab"
 modulo: python
 orden: 1
 estado: por-preparar
-enlaces: []
-#  - texto: "Nombre del enlace"
-#    url: "https://..."
 ---
 
 <!--

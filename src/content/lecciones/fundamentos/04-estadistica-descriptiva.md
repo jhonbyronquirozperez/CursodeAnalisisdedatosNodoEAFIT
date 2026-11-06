@@ -3,9 +3,6 @@ titulo: "Estadística descriptiva"
 modulo: fundamentos
 orden: 4
 estado: por-preparar
-enlaces: []
-#  - texto: "Nombre del enlace"
-#    url: "https://..."
 ---
 
 <!--

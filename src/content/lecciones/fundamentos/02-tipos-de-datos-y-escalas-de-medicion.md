@@ -3,9 +3,6 @@ titulo: "Tipos de datos y escalas de medición"
 modulo: fundamentos
 orden: 2
 estado: por-preparar
-enlaces: []
-#  - texto: "Nombre del enlace"
-#    url: "https://..."
 ---
 
 <!--

@@ -3,9 +3,6 @@ titulo: "SELECT, WHERE y ORDER BY"
 modulo: sql
 orden: 2
 estado: por-preparar
-enlaces: []
-#  - texto: "Nombre del enlace"
-#    url: "https://..."
 ---
 
 <!--

@@ -3,9 +3,6 @@ titulo: "Procesos ETL y ELT"
 modulo: data-warehouse
 orden: 3
 estado: por-preparar
-enlaces: []
-#  - texto: "Nombre del enlace"
-#    url: "https://..."
 ---
 
 <!--
