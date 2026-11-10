@@ -201,6 +201,27 @@ Texto normal, **negrita**, *cursiva* y `código en línea`.
 
 La lección 1.1 tiene un ejemplo de cada una: la comparativa en la lección y la de datos en su actividad.
 
+**Pregunta para la clase con respuesta oculta.** Copia este bloque y cambia el texto. Deja las líneas en blanco tal como están: sin ellas, el texto de adentro no se convierte en negrita, párrafos, etc.
+
+```markdown
+<div class="pregunta">
+
+### Pregunta para la clase
+
+**¿Aquí va la pregunta?**
+
+<details>
+<summary>Ver respuesta</summary>
+
+Aquí va la respuesta. Puede tener varios párrafos.
+
+</details>
+
+</div>
+```
+
+Se ve como una caja destacada; la respuesta aparece cuando el estudiante hace clic en "Ver respuesta". Si quieres dejar solo la pregunta, borra desde `<details>` hasta `</details>` (así está la lección 1.2).
+
 ### Agregar actividades a una lección
 
 Las actividades aparecen al final de la lección, en "Actividades de la lección". Cada actividad es un archivo `.md` dentro de una carpeta que se llama **igual que el archivo de la lección, sin `.md`**:

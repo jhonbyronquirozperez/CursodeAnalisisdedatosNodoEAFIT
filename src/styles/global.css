@@ -250,6 +250,92 @@ img {
 .prosa blockquote > :last-child {
   margin-bottom: 0;
 }
+/* Pregunta para la clase: caja destacada con la respuesta en un desplegable.
+   En Markdown: <div class="pregunta"> … <details><summary>Ver respuesta</summary> … */
+.prosa .pregunta {
+  margin: 2rem 0;
+  padding: 1.25rem 1.4rem 1.1rem;
+  border: 1px solid color-mix(in srgb, var(--mod, var(--cian)) 60%, transparent);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--mod, var(--cian)) 12%, transparent), transparent 55%),
+    var(--fondo-elevado);
+  box-shadow: 0 0 28px -14px var(--mod, var(--cian));
+}
+.prosa .pregunta h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 0 0.75rem;
+  font-family: var(--fuente-codigo);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mod, var(--cian));
+}
+.prosa .pregunta h3::before {
+  content: '?';
+  content: '?' / '';
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 1px solid currentColor;
+  font-size: 0.9rem;
+}
+.prosa .pregunta > p {
+  font-size: 1.15rem;
+}
+.prosa .pregunta > :last-child {
+  margin-bottom: 0;
+}
+.prosa .pregunta details {
+  margin-top: 0.25rem;
+}
+.prosa .pregunta summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.55rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--mod, var(--cian)) 55%, transparent);
+  background: color-mix(in srgb, var(--mod, var(--cian)) 8%, transparent);
+  color: var(--mod, var(--cian));
+  font-family: var(--fuente-codigo);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  list-style: none;
+  transition: background-color 0.2s;
+}
+.prosa .pregunta summary::-webkit-details-marker {
+  display: none;
+}
+.prosa .pregunta summary::before {
+  content: '▸';
+  content: '▸' / '';
+  transition: transform 0.2s;
+}
+.prosa .pregunta summary:hover {
+  background: color-mix(in srgb, var(--mod, var(--cian)) 16%, transparent);
+}
+.prosa .pregunta details[open] summary::before {
+  transform: rotate(90deg);
+}
+.prosa .pregunta details[open] summary {
+  margin-bottom: 1.1rem;
+}
+/* Línea continua a la izquierda de la respuesta */
+.prosa .pregunta details > :not(summary) {
+  margin: 0;
+  padding: 0 0 1.1rem 1rem;
+  border-left: 2px solid var(--borde-fuerte);
+}
+.prosa .pregunta details > :last-child {
+  padding-bottom: 0;
+}
+
 .prosa table {
   border-collapse: collapse;
   width: 100%;
@@ -291,6 +377,10 @@ img {
   .prosa th,
   .prosa td {
     padding: 0.45rem 0.55rem;
+  }
+  /* Ancho mínimo por columna: si la tabla no cabe, se desplaza en vez de apretarse */
+  .prosa table:not(.tabla-tarjetas) :is(th, td):not(:first-child) {
+    min-width: 8rem;
   }
 
   /* Tablas comparativas: cada fila se muestra como una tarjeta.
@@ -417,8 +507,13 @@ pre.astro-code[data-language]::before {
   text-transform: uppercase;
   color: var(--mod, var(--cian));
 }
-pre.astro-code[data-language='plaintext']::before {
+pre.astro-code[data-language='plaintext']::before,
+pre.astro-code[data-language='text']::before {
   content: none;
+}
+pre.astro-code[data-language='plaintext'],
+pre.astro-code[data-language='text'] {
+  padding-top: 1rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
