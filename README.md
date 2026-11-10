@@ -249,7 +249,7 @@ Aquí van las instrucciones, en Markdown: texto, listas, tablas, imágenes…
 
 - `titulo` y `orden` son obligatorios. El sitio muestra **Actividad 1: ¿Qué nos dicen los datos?** a partir de ellos.
 - `objetivo` y `tiempo` son opcionales; si los dejas vacíos, no aparecen.
-- Todo lo que escribas debajo del segundo `---` aparece bajo el título "Instrucciones". Si necesitas subtítulos dentro de una actividad, usa `####`.
+- Todo lo que escribas debajo del segundo `---` aparece bajo el título "Instrucciones". Si necesitas subtítulos dentro de una actividad, usa `####` (por ejemplo `#### Qué entregas`); en ese caso el sitio no agrega "Instrucciones" y usa tus subtítulos.
 - Si una lección no tiene carpeta de actividades, el sitio muestra "Actividades por agregar".
 - Si el nombre de la carpeta no coincide con ninguna lección, `npm run build` muestra un error que dice qué archivo revisar.
 
