@@ -21,4 +21,12 @@ export const curso = {
     github: 'https://github.com/jhonbyronquirozperez',
     linkedin: '',
   },
+
+  // Formulario de estudiantes (página /formulario/). Pega aquí la dirección de
+  // tu aplicación web de Google Apps Script; termina en /exec.
+  // Los pasos están en el README, sección "Formulario de estudiantes".
+  formulario: {
+    urlGoogle:
+      'https://script.google.com/macros/s/AKfycbxNtTKcyRNsq8oQwZC-XgyA_8UCKhL6cmMGCioaTIdmS9-BtfbjqOwdh0R9in1855E6/exec',
+  },
 };

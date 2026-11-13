@@ -1,0 +1,156 @@
+---
+// Formulario de estudiantes. No valida nada: los datos llegan a una hoja de
+// Google tal como los escriben los estudiantes, para practicar limpieza de datos.
+// La dirección de la hoja se configura en src/config/curso.ts (formulario.urlGoogle).
+// Los pasos para conectarlo están en el README, sección "Formulario de estudiantes".
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { curso } from '../config/curso';
+
+const destino = curso.formulario.urlGoogle.trim();
+
+const campos = [
+  { nombre: 'nombre', etiqueta: 'Nombre' },
+  { nombre: 'apellido', etiqueta: 'Apellido' },
+  { nombre: 'telefono', etiqueta: 'Número de teléfono' },
+  { nombre: 'correo', etiqueta: 'Correo electrónico' },
+  { nombre: 'edad', etiqueta: 'Edad' },
+  { nombre: 'lugar_nacimiento', etiqueta: 'Lugar de nacimiento' },
+];
+---
+
+<BaseLayout titulo="Formulario de estudiantes" completo>
+  <div class="contenedor pagina-formulario">
+    <h1>Formulario de estudiantes</h1>
+
+    {
+      !destino && (
+        <p class="aviso">
+          Este formulario todavía no está conectado a la hoja de Google. Los pasos están en el
+          README, en "Formulario de estudiantes".
+        </p>
+      )
+    }
+
+    <!--
+      Todos los campos son de texto libre y sin "required": se acepta cualquier cosa,
+      incluso vacío. autocapitalize, autocorrect y spellcheck apagados para que el
+      celular no corrija lo que escriben.
+    -->
+    <form
+      id="formulario-estudiantes"
+      method="post"
+      action={destino || undefined}
+      data-destino={destino}
+      novalidate
+    >
+      {
+        campos.map((c) => (
+          <div class="campo">
+            <label for={c.nombre}>{c.etiqueta}</label>
+            <input
+              type="text"
+              id={c.nombre}
+              name={c.nombre}
+              autocomplete="off"
+              autocapitalize="off"
+              autocorrect="off"
+              spellcheck="false"
+            />
+          </div>
+        ))
+      }
+
+      <button type="submit" class="btn btn-primario">Enviar</button>
+      <p class="estado" role="status"></p>
+    </form>
+  </div>
+</BaseLayout>
+
+<script>
+  const formulario = document.querySelector<HTMLFormElement>('#formulario-estudiantes');
+
+  formulario?.addEventListener('submit', async (evento) => {
+    evento.preventDefault();
+    const estado = formulario.querySelector<HTMLElement>('.estado')!;
+    const boton = formulario.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    const destino = formulario.dataset.destino;
+
+    if (!destino) {
+      estado.textContent = 'El formulario todavía no está conectado.';
+      return;
+    }
+
+    // Se envía exactamente lo que escribieron, sin recortar ni corregir
+    const datos = new URLSearchParams();
+    for (const [campo, valor] of new FormData(formulario)) datos.append(campo, String(valor));
+
+    boton.disabled = true;
+    estado.textContent = 'Enviando…';
+    try {
+      // "no-cors": Google no deja leer su respuesta, pero los datos sí llegan a la hoja
+      await fetch(destino, { method: 'POST', mode: 'no-cors', body: datos });
+      formulario.reset();
+      estado.textContent = '¡Gracias! Tus datos se enviaron.';
+    } catch {
+      estado.textContent = 'No se pudieron enviar los datos. Revisa tu conexión e inténtalo de nuevo.';
+    } finally {
+      boton.disabled = false;
+    }
+  });
+</script>
+
+<style>
+  .pagina-formulario {
+    max-width: 34rem;
+    padding: 2.5rem 0 4rem;
+  }
+  h1 {
+    margin-bottom: 1.5rem;
+  }
+  .aviso {
+    margin: 0 0 1.5rem;
+    padding: 0.75rem 1rem;
+    border-left: 3px solid var(--naranja);
+    background: color-mix(in srgb, var(--naranja) 10%, transparent);
+  }
+  .campo {
+    margin-bottom: 1.1rem;
+  }
+  label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-weight: 600;
+  }
+  input {
+    width: 100%;
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--borde-fuerte);
+    border-radius: var(--radio);
+    background: var(--fondo-suave);
+    color: var(--texto);
+    font: inherit;
+    font-size: 1rem;
+  }
+  input:hover {
+    border-color: color-mix(in srgb, var(--cian) 45%, var(--borde-fuerte));
+  }
+  input:focus-visible {
+    border-color: var(--cian);
+    outline-offset: 1px;
+  }
+  button {
+    margin-top: 0.5rem;
+    border: 0;
+    cursor: pointer;
+  }
+  button:disabled {
+    opacity: 0.6;
+    cursor: wait;
+  }
+  .estado {
+    min-height: 1.5em;
+    margin: 1rem 0 0;
+    font-weight: 600;
+    color: var(--lima);
+  }
+</style>

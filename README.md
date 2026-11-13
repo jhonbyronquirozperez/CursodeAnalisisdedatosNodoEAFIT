@@ -15,7 +15,8 @@ Sitio estático del curso, hecho con [Astro](https://astro.build). Cada módulo 
 7. [Agregar imágenes](#7-agregar-imágenes)
 8. [Agregar bloques de código](#8-agregar-bloques-de-código)
 9. [Publicar en GitHub Pages](#9-publicar-en-github-pages)
-10. [Si algo falla](#10-si-algo-falla)
+10. [Formulario de estudiantes](#10-formulario-de-estudiantes)
+11. [Si algo falla](#11-si-algo-falla)
 
 ---
 
@@ -430,7 +431,76 @@ El archivo `netlify.toml` ya está listo. En [netlify.com](https://www.netlify.c
 
 ---
 
-## 10. Si algo falla
+## 10. Formulario de estudiantes
+
+La página `/formulario/` del sitio (por ejemplo `https://tu-sitio/formulario/`) tiene un formulario con nombre, apellido, número de teléfono, correo electrónico, edad y lugar de nacimiento. No está enlazada en el menú: comparte la dirección con tus estudiantes.
+
+**No valida nada.** Todos los campos son de texto libre, ninguno es obligatorio y el celular no corrige lo que escriben. Las respuestas se guardan en una hoja de Google Sheets **tal como las escribieron**, como texto: Google Sheets no las convierte en números ni en fechas. Así quedan "sucias" para practicar limpieza de datos.
+
+### Conectarlo a Google Sheets (una sola vez, unos 5 minutos)
+
+1. Crea una hoja de cálculo nueva en Google Sheets (entra a [sheets.new](https://sheets.new)) y ponle un nombre, por ejemplo "Formulario estudiantes".
+2. En el menú, ve a **Extensiones → Apps Script**.
+3. Borra lo que aparece, pega este código y guarda (ícono de disquete):
+
+   ```js
+   // Formulario de estudiantes → esta hoja de cálculo.
+   // Guarda los datos tal como los escriben, como texto: sin validar,
+   // sin corregir y sin que Google Sheets los convierta en números o fechas.
+   const COLUMNAS = ['nombre', 'apellido', 'telefono', 'correo', 'edad', 'lugar_nacimiento'];
+
+   function doPost(e) {
+     const candado = LockService.getScriptLock();
+     candado.waitLock(10000);
+     try {
+       const hoja = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+       if (hoja.getLastRow() === 0) {
+         hoja.appendRow(['fecha_envio'].concat(COLUMNAS));
+       }
+       // El apóstrofo inicial hace que Google Sheets guarde el valor como texto, tal cual
+       const valores = COLUMNAS.map(function (columna) {
+         const valor = (e && e.parameter && e.parameter[columna]) || '';
+         return valor === '' ? '' : "'" + valor;
+       });
+       hoja.appendRow([new Date()].concat(valores));
+     } finally {
+       candado.releaseLock();
+     }
+     return HtmlService.createHtmlOutput('<p>¡Gracias! Tus datos se enviaron.</p>');
+   }
+
+   // Si abres la dirección en el navegador, confirma que está funcionando
+   function doGet() {
+     return HtmlService.createHtmlOutput('<p>El formulario está conectado.</p>');
+   }
+   ```
+
+4. Arriba a la derecha, haz clic en **Implementar → Nueva implementación**. En el engranaje de "Seleccionar tipo", elige **Aplicación web** y configura:
+   - **Ejecutar como:** Yo.
+   - **Quién tiene acceso:** Cualquier persona.
+5. Haz clic en **Implementar** y autoriza el acceso con tu cuenta de Google. Si aparece "Google no verificó esta app", entra a **Configuración avanzada → Ir a … (no seguro)**: es tu propio código.
+6. Copia la **URL de la aplicación web** (termina en `/exec`). Si la abres en el navegador, debe decir "El formulario está conectado".
+7. Pégala en `src/config/curso.ts`:
+
+   ```ts
+   formulario: {
+     urlGoogle: 'https://script.google.com/macros/s/…/exec',
+   },
+   ```
+
+8. Guarda y publica el sitio. Desde ese momento, cada envío agrega una fila a la hoja.
+
+Mientras `urlGoogle` esté vacío, la página muestra un aviso de que el formulario no está conectado.
+
+### Descargar los datos
+
+En la hoja de Google: **Archivo → Descargar → Valores separados por comas (.csv)**. La primera columna, `fecha_envio`, la agrega la hoja con la fecha y hora de cada envío.
+
+Si cambias el código de Apps Script, publica una versión nueva: **Implementar → Gestionar implementaciones → editar (lápiz) → Versión: Nueva versión**. Así la URL no cambia.
+
+---
+
+## 11. Si algo falla
 
 Al correr `npm run dev` o `npm run build`, los errores aparecen en la terminal indicando el archivo. Los más comunes:
 
