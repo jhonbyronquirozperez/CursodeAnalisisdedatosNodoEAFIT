@@ -13,6 +13,9 @@
 // En cualquier tabla, una celda escrita toda en negrita (por ejemplo
 // | **Lidera** |) recibe la clase "celda-destacada" y se resalta con el color
 // del módulo. No aplica a la primera columna, que suele ser el nombre de la fila.
+//
+// Las tablas de 5 columnas o más reciben la clase "tabla-ancha": en
+// computador usan todo el ancho de la columna principal (global.css).
 
 const hijos = (nodo, etiqueta) =>
   (nodo?.children ?? []).filter((n) => n.type === 'element' && n.tagName === etiqueta);
@@ -34,7 +37,10 @@ export const tablasMarkdown = {
       const columnas = hijos(filaEncabezado, 'th').map((th) => ctx.textContent(th).trim());
       const tarjetas = columnas.length >= 2 && columnas[0] === '';
 
-      if (tarjetas) ctx.setProperty(tabla, 'className', ['tabla-tarjetas']);
+      const clases = [];
+      if (tarjetas) clases.push('tabla-tarjetas');
+      if (columnas.length >= 5) clases.push('tabla-ancha');
+      if (clases.length) ctx.setProperty(tabla, 'className', clases);
       for (const cuerpo of hijos(tabla, 'tbody')) {
         for (const fila of hijos(cuerpo, 'tr')) {
           hijos(fila, 'td').forEach((celda, i) => {

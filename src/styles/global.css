@@ -336,6 +336,62 @@ img {
   padding-bottom: 0;
 }
 
+/* Etiquetas (chips) en fuente monoespaciada, una al lado de la otra.
+   En Markdown: <ul class="chips"><li><code>…</code></li>…</ul>
+   La forma correcta lleva class="chip-correcto" (verde con ✓); las demás
+   se muestran como variantes (naranja). */
+.prosa .chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0 0 1.1rem;
+  padding: 0;
+  list-style: none;
+}
+.prosa .chips li {
+  margin: 0;
+}
+.prosa .chips code {
+  display: inline-block;
+  padding: 0.3em 0.65em;
+  border: 1px solid color-mix(in srgb, var(--naranja) 55%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--naranja) 10%, transparent);
+  color: var(--naranja);
+  font-size: 0.9rem;
+  white-space: pre;
+}
+.prosa .chips .chip-correcto {
+  border-color: color-mix(in srgb, var(--lima) 60%, transparent);
+  background: color-mix(in srgb, var(--lima) 12%, transparent);
+  color: var(--lima);
+}
+.prosa .chips .chip-correcto::before {
+  content: '✓ ';
+  content: '✓ ' / 'forma correcta: ';
+}
+
+/* El símbolo ␣ (espacio en blanco) dentro de código, dibujado como un hueco
+   claro para que no se confunda con un guion bajo (src/lib/espacios-markdown.mjs).
+   El carácter ␣ sigue en la página: se copia y se lee igual. */
+.espacio-visible {
+  display: inline-block;
+  width: 0.8ch;
+  margin-inline: 0.1ch;
+  height: 0.45em;
+  border: 0.12em solid currentColor;
+  border-top: 0;
+  overflow: hidden;
+  color: inherit;
+  text-indent: 2ch;
+  white-space: nowrap;
+  vertical-align: baseline;
+}
+/* El código que tiene ␣ no se parte en dos líneas */
+code:has(.espacio-visible) {
+  white-space: nowrap;
+}
+
 /* Pista desplegable: cerrada por defecto; el estudiante decide si la abre.
    En Markdown: <details class="pista"><summary>💡 Ayuda: …</summary> … </details> */
 .prosa .pista {
@@ -423,6 +479,16 @@ img {
   font-family: inherit;
   font-size: inherit;
   color: var(--texto);
+}
+/* Tablas de 5 columnas o más (src/lib/tablas-markdown.mjs): usan todo el ancho
+   de la columna principal; el resto del texto mantiene un ancho cómodo de lectura */
+.prosa:has(> .tabla-ancha) {
+  max-width: none;
+}
+/* 38rem = los 72ch de .prosa con la letra normal. Se usa rem y no ch porque
+   ch cambia con el tamaño de letra de cada elemento (títulos, tablas, código). */
+.prosa:has(> .tabla-ancha) > :not(.tabla-ancha) {
+  max-width: 38rem;
 }
 /* Celda escrita toda en negrita, como **Lidera** (src/lib/tablas-markdown.mjs) */
 .prosa td.celda-destacada {

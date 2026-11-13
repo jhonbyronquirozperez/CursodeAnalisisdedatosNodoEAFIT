@@ -5,6 +5,7 @@ import { satteri } from '@astrojs/markdown-satteri';
 import { tablasMarkdown } from './src/lib/tablas-markdown.mjs';
 import { enlacesMarkdown } from './src/lib/enlaces-markdown.mjs';
 import { imagenesMarkdown } from './src/lib/imagenes-markdown.mjs';
+import { espaciosMarkdown } from './src/lib/espacios-markdown.mjs';
 
 // SITE_URL y BASE_PATH los define el workflow de GitHub Pages
 // (.github/workflows/deploy.yml). En tu computadora no hace falta tocarlos.
@@ -16,10 +17,15 @@ export default defineConfig({
   integrations: [mdx()],
   markdown: {
     // Tablas que se convierten en tarjetas en celular, botones de descarga,
-    // enlaces externos en pestaña nueva e imágenes de public/imagenes/
-    // (con recuadro si el archivo no existe)
+    // enlaces externos en pestaña nueva, imágenes de public/imagenes/
+    // (con recuadro si el archivo no existe) y el símbolo ␣ en el código
     processor: satteri({
-      hastPlugins: [tablasMarkdown, enlacesMarkdown(base), imagenesMarkdown(base)],
+      hastPlugins: [
+        tablasMarkdown,
+        enlacesMarkdown(base),
+        imagenesMarkdown(base),
+        espaciosMarkdown,
+      ],
     }),
     shikiConfig: {
       // Tema oscuro de alto contraste para el resaltado de código

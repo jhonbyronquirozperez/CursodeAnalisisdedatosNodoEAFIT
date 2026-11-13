@@ -203,6 +203,22 @@ La lección 1.1 tiene un ejemplo de cada una: la comparativa en la lección y la
 
 **Resaltar una celda.** Si escribes una celda completa en negrita (`| **Lidera** |`), se resalta con el color del módulo. No aplica a la primera columna. Ejemplo: la tabla de roles de la lección 1.3.
 
+**Tablas anchas.** Las tablas de 5 columnas o más usan en computador todo el ancho de la página, no solo el del texto. En celular, todas las tablas de datos se desplazan de lado.
+
+**Espacios visibles.** Dentro de código (entre comillas invertidas), el símbolo ␣ se dibuja como un hueco claro para que no se confunda con un guion bajo. Ejemplo: `` `LAS␣␣ESTANCIAS` `` en la lección 1.4.
+
+**Etiquetas (chips).** Para mostrar varias palabras como etiquetas, una al lado de la otra, copia este bloque. La que tiene `class="chip-correcto"` sale en verde con ✓; las demás, en naranja. Ejemplo: la caja "Haz la prueba" de la lección 1.4.
+
+```markdown
+<ul class="chips">
+<li><code class="chip-correcto">Medellín</code></li>
+<li><code>Medellin</code></li>
+<li><code>MEDELLIN</code></li>
+</ul>
+```
+
+Dentro de este bloque, el símbolo ␣ no se dibuja solo; escríbelo así: `<span class="espacio-visible" title="espacio">␣</span>`.
+
 **Pregunta para la clase con respuesta oculta.** Copia este bloque y cambia el texto. Deja las líneas en blanco tal como están: sin ellas, el texto de adentro no se convierte en negrita, párrafos, etc.
 
 ```markdown
