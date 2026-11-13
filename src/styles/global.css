@@ -371,6 +371,63 @@ img {
   content: '✓ ' / 'forma correcta: ';
 }
 
+/* Dos tipos de validación, en tarjetas lado a lado (una debajo de otra en celular).
+   En Markdown: <div class="tipos-validacion"><div class="tipo-validacion tipo-preventiva">…
+   Verde (lima) = preventiva; cian = revisión. Los mismos colores de .etiqueta-tipo. */
+.prosa .tipos-validacion {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+.prosa .tipo-validacion {
+  --tipo: var(--cian);
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--borde);
+  border-top: 3px solid var(--tipo);
+  background: var(--fondo-elevado);
+}
+.prosa .tipo-validacion > :last-child {
+  margin-bottom: 0;
+}
+.prosa .tipo-validacion strong {
+  display: block;
+  margin-bottom: 0.3rem;
+  color: var(--tipo);
+}
+.prosa .tipo-preventiva {
+  --tipo: var(--lima);
+}
+.prosa .tipo-revision {
+  --tipo: var(--cian);
+}
+@media (max-width: 640px) {
+  .prosa .tipos-validacion {
+    grid-template-columns: 1fr;
+  }
+}
+/* Etiqueta de color dentro de una tabla: <span class="etiqueta-tipo tipo-preventiva">…</span> */
+.prosa .etiqueta-tipo {
+  display: inline-block;
+  padding: 0.15em 0.55em;
+  border: 1px solid color-mix(in srgb, var(--tipo) 55%, transparent);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--tipo) 12%, transparent);
+  color: var(--tipo);
+  font-family: var(--fuente-codigo);
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+/* Ruta de menú dentro de una tabla: <span class="ruta-menu">(Datos > Validación de datos)</span> */
+.prosa .ruta-menu {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--texto-suave);
+  font-size: 0.88em;
+  font-style: italic;
+}
+
 /* El símbolo ␣ (espacio en blanco) dentro de código, dibujado como un hueco
    claro para que no se confunda con un guion bajo (src/lib/espacios-markdown.mjs).
    El carácter ␣ sigue en la página: se copia y se lee igual. */
@@ -562,9 +619,10 @@ code:has(.espacio-visible) {
     color: var(--mod, var(--cian));
   }
 }
-/* Botón de descarga: enlaces de Markdown a public/descargas/
-   (src/lib/enlaces-markdown.mjs) */
-.prosa .boton-descarga {
+/* Botones en Markdown (src/lib/enlaces-markdown.mjs):
+   - de descarga: enlaces a public/descargas/ (con ↓)
+   - de enlace: enlaces con "botón" entre comillas después de la dirección (con →) */
+.prosa :is(.boton-descarga, .boton-enlace) {
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
@@ -585,7 +643,12 @@ code:has(.espacio-visible) {
   content: '↓' / '';
   font-size: 1.15em;
 }
-.prosa .boton-descarga:hover {
+.prosa .boton-enlace::after {
+  content: '→';
+  content: '→' / '';
+  font-size: 1.15em;
+}
+.prosa :is(.boton-descarga, .boton-enlace):hover {
   border-color: var(--mod, var(--cian));
   background: color-mix(in srgb, var(--mod, var(--cian)) 16%, transparent);
 }
@@ -671,6 +734,106 @@ pre.astro-code[data-language='text']::before {
 pre.astro-code[data-language='plaintext'],
 pre.astro-code[data-language='text'] {
   padding-top: 1rem;
+}
+
+/* ===== Formularios (src/pages/formulario.astro y formulario-validado.astro) ===== */
+.pagina-formulario {
+  max-width: 34rem;
+  padding: 2.5rem 0 4rem;
+}
+.pagina-formulario h1 {
+  margin-bottom: 1.5rem;
+}
+.pagina-formulario .aviso {
+  margin: 0 0 1.5rem;
+  padding: 0.75rem 1rem;
+  border-left: 3px solid var(--naranja);
+  background: color-mix(in srgb, var(--naranja) 10%, transparent);
+}
+.pagina-formulario .intro {
+  margin: -0.5rem 0 1.5rem;
+  color: var(--texto-suave);
+}
+.pagina-formulario .campo {
+  margin-bottom: 1.1rem;
+}
+.pagina-formulario fieldset {
+  margin: 0 0 1.1rem;
+  padding: 0;
+  border: 0;
+}
+.pagina-formulario legend {
+  margin-bottom: 0.75rem;
+  padding: 0;
+  font-family: var(--fuente-titulos);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+.pagina-formulario label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-weight: 600;
+}
+.pagina-formulario :is(input, select) {
+  width: 100%;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--borde-fuerte);
+  border-radius: var(--radio);
+  background: var(--fondo-suave);
+  color: var(--texto);
+  font: inherit;
+  font-size: 1rem;
+}
+.pagina-formulario :is(input, select):hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--cian) 45%, var(--borde-fuerte));
+}
+.pagina-formulario :is(input, select):focus-visible {
+  border-color: var(--cian);
+  outline-offset: 1px;
+}
+.pagina-formulario select:disabled {
+  opacity: 0.6;
+}
+.pagina-formulario button {
+  margin-top: 0.5rem;
+  border: 0;
+  cursor: pointer;
+}
+.pagina-formulario button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.pagina-formulario .estado {
+  min-height: 1.5em;
+  margin: 1rem 0 0;
+  font-weight: 600;
+  color: var(--lima);
+}
+/* Ayudas y errores del formulario con validación */
+.pagina-formulario .ayuda,
+.pagina-formulario .error {
+  margin: 0.35rem 0 0;
+  font-size: 0.9rem;
+}
+.pagina-formulario .ayuda {
+  color: var(--texto-suave);
+}
+.pagina-formulario .error {
+  font-weight: 600;
+  color: var(--rosa);
+}
+.pagina-formulario .error:empty {
+  display: none;
+}
+.pagina-formulario .error::before {
+  content: '✕ ';
+  content: '✕ ' / '';
+}
+.pagina-formulario [aria-invalid='true'] {
+  border-color: var(--rosa);
+}
+.pagina-formulario .estado.con-errores {
+  color: var(--rosa);
 }
 
 @media (prefers-reduced-motion: reduce) {

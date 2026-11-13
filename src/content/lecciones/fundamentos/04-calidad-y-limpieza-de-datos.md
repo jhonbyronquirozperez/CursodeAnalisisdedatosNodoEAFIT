@@ -41,6 +41,8 @@ Para el computador, ¿cuántas ciudades distintas hay en esa lista?
 
 </div>
 
+
+
 Dos casos que ya conoces de secciones anteriores:
 
 - **El precio "2.500".** Si un programa configurado en inglés lo lee, vale 2,5, y los ingresos de la tienda salen mil veces más pequeños.
@@ -74,3 +76,54 @@ Casi todos los problemas de limpieza caen en esta lista. Para cada uno hay una f
 | Valores imposibles | Una edad de `150` años | Dejar el valor vacío y pedir el dato real; nunca adivinarlo | Filtro con condición (mayor que 100) | `df.loc[df.edad > 100, "edad"] = pd.NA` |
 | Columnas sin información | `MEDELLIN` repetido en las 271 filas | Guardar el valor una vez como metadato y quitar la columna | Eliminar la columna | `df.nunique() == 1` y `.drop(columns=...)` |
 | Unidades equivocadas | Área en grados al cuadrado | Convertir y dejar la unidad en el nombre de la columna | `=H2*12236` | `df["area_km2"] = df["Shape__Area"] * 12236` |
+
+
+## Ejercicio pràctico
+[Abrir el formulario de estudiantes](/formulario/ "botón")
+
+La validación de datos es un proceso fundamental para garantizar la calidad y limpieza de la información desde el momento en que se captura. Su objetivo es evitar que ingresen datos incorrectos, incompletos, duplicados o inconsistentes a un sistema, aplicando reglas que permitan verificar formatos, campos obligatorios, rangos y coherencia de la información. Esto reduce la necesidad de realizar procesos de limpieza posteriores, facilita el análisis y procesamiento de los datos y garantiza que la información almacenada sea confiable, precisa y útil para la toma de decisiones. En otras palabras, una buena calidad de datos comienza con una correcta validación desde su origen.
+
+[Abrir el formulario con validación](/formulario-validado/ "botón")
+
+
+
+## Herramientas para validar datos
+
+Limpiar datos es corregir errores que ya existen. Validar es comprobar que los datos cumplen las reglas, y lo ideal es hacerlo antes de que los errores entren. Las herramientas de validación se dividen en dos grupos:
+
+<div class="tipos-validacion">
+<div class="tipo-validacion tipo-preventiva">
+
+**Validación preventiva:** evita que el error entre. Se aplica en el momento en que alguien escribe el dato, por ejemplo en un formulario o en una hoja de cálculo.
+
+</div>
+<div class="tipo-validacion tipo-revision">
+
+**Validación de revisión:** encuentra el error después. Se aplica sobre datos que ya existen, antes de analizarlos.
+
+</div>
+</div>
+
+Muchos de los errores que viste en esta sección se habrían evitado desde el principio con un formulario bien configurado. Si la ciudad se elige de una lista desplegable, nadie puede escribir "MEDELLIN", "Medellin" ni "Mdllín".
+
+Estas son las herramientas principales, ordenadas de la más sencilla a la más profesional:
+
+<div class="tabla-ancha">
+
+| Herramienta | Tipo | Qué hace | Para quién |
+| --- | --- | --- | --- |
+| **Validación de datos en Excel y Google Sheets** <span class="ruta-menu">(Datos > Validación de datos)</span> | <span class="etiqueta-tipo tipo-preventiva">Preventiva</span> | Restringe lo que se puede escribir en una celda: listas desplegables, rangos de números, fechas o longitud del texto | Cualquier persona; ideal para empezar |
+| **Validación en Google Forms o Microsoft Forms** | <span class="etiqueta-tipo tipo-preventiva">Preventiva</span> | Obliga a que la respuesta sea un número, un correo válido o una opción de una lista | Quien recoge datos con encuestas o inscripciones |
+| **Power Query en Excel** <span class="ruta-menu">(Vista > Calidad de columna, Distribución de columnas, Perfil de columna)</span> | <span class="etiqueta-tipo tipo-revision">Revisión</span> | Muestra para cada columna el porcentaje de valores válidos, con error y vacíos, y cuántos valores distintos hay | Analistas que trabajan en Excel |
+| **OpenRefine** (gratuita) | <span class="etiqueta-tipo tipo-revision">Revisión y limpieza</span> | Agrupa automáticamente valores parecidos, como "Medellin" y "MEDELLIN", y permite filtrar por categorías | Quien limpia datos sin programar |
+| **ydata-profiling** (Python) | <span class="etiqueta-tipo tipo-revision">Revisión</span> | Con una línea de código genera un informe con los nulos, duplicados, distribuciones y alertas de cada columna | Primer contacto con un conjunto de datos en Python |
+| **Pandera** (Python) | <span class="etiqueta-tipo tipo-revision">Revisión</span> | Define un "esquema" para una tabla de pandas (tipos, rangos y valores permitidos) y avisa si los datos no lo cumplen | Analistas y científicos de datos en Python |
+| **Pydantic** (Python) | <span class="etiqueta-tipo tipo-revision">Revisión al recibir datos</span> | Valida los registros uno por uno; se usa mucho para el JSON que llega de una API | Quien consume API o construye aplicaciones |
+| **Great Expectations (GX Core)** (Python) | <span class="etiqueta-tipo tipo-revision">Revisión</span> | Define "expectativas" sobre los datos, las comprueba y genera documentación de los resultados | Equipos de datos con procesos automáticos |
+| **Pruebas de dbt** (SQL) | <span class="etiqueta-tipo tipo-revision">Revisión</span> | Pruebas sobre las tablas de una base de datos: valores únicos, no nulos, valores aceptados y relaciones entre tablas | Ingenieros y analistas que trabajan con SQL |
+| **Soda Core** | <span class="etiqueta-tipo tipo-revision">Revisión</span> | Revisiones escritas en un lenguaje sencillo (SodaCL) que se ejecutan sobre bases de datos y archivos | Equipos de ingeniería de datos |
+| **Deequ** (AWS, sobre Spark) | <span class="etiqueta-tipo tipo-revision">Revisión</span> | Reglas de calidad y métricas para conjuntos de datos muy grandes | Big data |
+
+</div>
+
+**¿Por dónde empezar?** Si estás comenzando, aprende primero la validación de datos en Excel o Google Sheets y el perfil de columnas de Power Query. Las herramientas de Python y SQL las usarás más adelante, cuando trabajes con procesos automáticos o con grandes volúmenes de datos.

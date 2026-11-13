@@ -16,6 +16,15 @@
 //
 // - Agrega target="_blank" y rel="noopener noreferrer".
 // - Agrega un aviso oculto para lectores de pantalla: "(se abre en otra pestaña)".
+//
+// Páginas del propio sitio (empiezan con /) → se les agrega la carpeta base:
+//
+//   [Formulario de estudiantes](/formulario/)
+//
+// Cualquier enlace se muestra como botón si lleva "botón" entre comillas
+// después de la dirección (clase "boton-enlace" en global.css):
+//
+//   [Abrir el formulario de estudiantes](/formulario/ "botón")
 
 export function enlacesMarkdown(base = '/') {
   const prefijo = base.replace(/\/?$/, '/');
@@ -25,6 +34,11 @@ export function enlacesMarkdown(base = '/') {
       filter: ['a'],
       visit(enlace, ctx) {
         const href = String(enlace.properties?.href ?? '');
+        const esBoton = enlace.properties?.title === 'botón';
+        if (esBoton) {
+          ctx.setProperty(enlace, 'title', null);
+          ctx.setProperty(enlace, 'className', ['boton-enlace']);
+        }
 
         if (href.startsWith('/descargas/')) {
           ctx.setProperty(enlace, 'href', prefijo + href.slice(1));
@@ -33,11 +47,22 @@ export function enlacesMarkdown(base = '/') {
           return;
         }
 
+        // Página del sitio: /formulario/ → /<base>/formulario/ (si aún no la tiene)
+        if (href.startsWith('/') && !href.startsWith('//')) {
+          if (prefijo !== '/' && !href.startsWith(prefijo)) {
+            ctx.setProperty(enlace, 'href', prefijo + href.slice(1));
+          }
+          return;
+        }
+
         if (/^https?:\/\//.test(href) && enlace.properties?.target !== '_blank') {
+          const { title, ...propiedades } = enlace.properties;
           ctx.replaceNode(enlace, {
             ...enlace,
             properties: {
-              ...enlace.properties,
+              ...propiedades,
+              ...(title && !esBoton ? { title } : {}),
+              ...(esBoton ? { className: ['boton-enlace'] } : {}),
               target: '_blank',
               rel: ['noopener', 'noreferrer'],
             },

@@ -1,0 +1,390 @@
+---
+// Formulario con validación: la contraparte del formulario libre (/formulario/).
+// Cada campo filtra lo que se escribe, se corrige al salir del campo y se valida
+// antes de enviar, para que a la hoja de Google solo lleguen datos limpios.
+// Las respuestas van a la pestaña "Datos validados" de la misma hoja de Google
+// (src/config/curso.ts → formulario.urlGoogle). El código de Google Apps Script
+// que las recibe está en el README, sección "Formulario de estudiantes".
+//
+// El lugar de nacimiento se elige de la lista oficial de municipios de Colombia
+// (DIVIPOLA del DANE), guardada en src/data/municipios-colombia.json.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { curso } from '../config/curso';
+import municipios from '../data/municipios-colombia.json';
+
+const destino = curso.formulario.urlGoogle.trim();
+
+// Edades permitidas. Si las cambias, cámbialas también en el código de Apps Script.
+const EDAD = { min: 10, max: 100 };
+
+const departamentos = municipios.departamentos;
+// Para el script: [código del departamento, [[código del municipio, nombre], …]]
+const listaMunicipios = JSON.stringify(departamentos.map((d) => [d.codigo, d.municipios]));
+---
+
+<BaseLayout titulo="Formulario con validación" completo>
+  <div class="contenedor pagina-formulario">
+    <h1>Formulario con validación</h1>
+
+    {
+      !destino && (
+        <p class="aviso">
+          Este formulario todavía no está conectado a la hoja de Google. Los pasos están en el
+          README, en "Formulario de estudiantes".
+        </p>
+      )
+    }
+
+    <p class="intro">Todos los campos son obligatorios.</p>
+
+    <form
+      id="formulario-validado"
+      method="post"
+      action={destino || undefined}
+      data-destino={destino}
+      data-edad-min={EDAD.min}
+      data-edad-max={EDAD.max}
+    >
+      <div class="campo">
+        <label for="nombre">Nombre</label>
+        <input
+          type="text"
+          id="nombre"
+          name="nombre"
+          required
+          maxlength="40"
+          autocomplete="given-name"
+          aria-describedby="nombre-ayuda nombre-error"
+        />
+        <p class="ayuda" id="nombre-ayuda">Solo letras. Ejemplo: María José</p>
+        <p class="error" id="nombre-error"></p>
+      </div>
+
+      <div class="campo">
+        <label for="apellido">Apellido</label>
+        <input
+          type="text"
+          id="apellido"
+          name="apellido"
+          required
+          maxlength="40"
+          autocomplete="family-name"
+          aria-describedby="apellido-ayuda apellido-error"
+        />
+        <p class="ayuda" id="apellido-ayuda">Solo letras. Ejemplo: Restrepo Gómez</p>
+        <p class="error" id="apellido-error"></p>
+      </div>
+
+      <div class="campo">
+        <label for="telefono">Número de teléfono</label>
+        <input
+          type="tel"
+          id="telefono"
+          name="telefono"
+          required
+          inputmode="numeric"
+          autocomplete="tel-national"
+          aria-describedby="telefono-ayuda telefono-error"
+        />
+        <p class="ayuda" id="telefono-ayuda">
+          10 dígitos, sin espacios: celular (empieza por 3) o fijo (empieza por 60). Ejemplo:
+          3001234567
+        </p>
+        <p class="error" id="telefono-error"></p>
+      </div>
+
+      <div class="campo">
+        <label for="correo">Correo electrónico</label>
+        <input
+          type="text"
+          id="correo"
+          name="correo"
+          required
+          maxlength="100"
+          inputmode="email"
+          autocomplete="email"
+          autocapitalize="off"
+          spellcheck="false"
+          aria-describedby="correo-ayuda correo-error"
+        />
+        <p class="ayuda" id="correo-ayuda">Ejemplo: nombre@gmail.com</p>
+        <p class="error" id="correo-error"></p>
+      </div>
+
+      <div class="campo">
+        <label for="edad">Edad</label>
+        <input
+          type="text"
+          id="edad"
+          name="edad"
+          required
+          inputmode="numeric"
+          aria-describedby="edad-ayuda edad-error"
+        />
+        <p class="ayuda" id="edad-ayuda">Solo números, entre {EDAD.min} y {EDAD.max} años.</p>
+        <p class="error" id="edad-error"></p>
+      </div>
+
+      <fieldset>
+        <legend>Lugar de nacimiento</legend>
+
+        <div class="campo">
+          <label for="departamento">Departamento</label>
+          <select id="departamento" name="departamento" required aria-describedby="departamento-error">
+            <option value="">Elige un departamento</option>
+            {departamentos.map((d) => <option value={d.codigo}>{d.nombre}</option>)}
+            <option value="otro">Nací fuera de Colombia</option>
+          </select>
+          <p class="error" id="departamento-error"></p>
+        </div>
+
+        <div class="campo" id="campo-municipio">
+          <label for="municipio">Municipio</label>
+          <select id="municipio" name="municipio" required disabled aria-describedby="municipio-error">
+            <option value="">Primero elige el departamento</option>
+          </select>
+          <p class="error" id="municipio-error"></p>
+        </div>
+
+        <div class="campo" id="campo-pais" hidden>
+          <label for="pais">País</label>
+          <input
+            type="text"
+            id="pais"
+            name="pais"
+            required
+            disabled
+            maxlength="60"
+            autocomplete="country-name"
+            aria-describedby="pais-error"
+          />
+          <p class="error" id="pais-error"></p>
+        </div>
+      </fieldset>
+
+      <button type="submit" class="btn btn-primario">Enviar</button>
+      <p class="estado" role="status"></p>
+    </form>
+
+    <script type="application/json" id="datos-municipios" set:html={listaMunicipios} />
+  </div>
+</BaseLayout>
+
+<script>
+  type Campo = HTMLInputElement | HTMLSelectElement;
+
+  const formulario = document.querySelector<HTMLFormElement>('#formulario-validado');
+  if (formulario) iniciar(formulario);
+
+  function iniciar(formulario: HTMLFormElement) {
+    // Con JavaScript usamos nuestros propios mensajes, en español y junto a cada campo
+    formulario.noValidate = true;
+
+    const campo = <T extends Campo>(id: string) => formulario.querySelector<T>('#' + id)!;
+    const nombre = campo<HTMLInputElement>('nombre');
+    const apellido = campo<HTMLInputElement>('apellido');
+    const telefono = campo<HTMLInputElement>('telefono');
+    const correo = campo<HTMLInputElement>('correo');
+    const edad = campo<HTMLInputElement>('edad');
+    const departamento = campo<HTMLSelectElement>('departamento');
+    const municipio = campo<HTMLSelectElement>('municipio');
+    const pais = campo<HTMLInputElement>('pais');
+    const campoMunicipio = formulario.querySelector<HTMLElement>('#campo-municipio')!;
+    const campoPais = formulario.querySelector<HTMLElement>('#campo-pais')!;
+    const estado = formulario.querySelector<HTMLElement>('.estado')!;
+    const boton = formulario.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+
+    const edadMin = Number(formulario.dataset.edadMin);
+    const edadMax = Number(formulario.dataset.edadMax);
+    const municipiosPorDepartamento = new Map<string, [string, string][]>(
+      JSON.parse(document.getElementById('datos-municipios')!.textContent!),
+    );
+
+    // ---------- 1. Filtros: lo que no se permite, no se puede escribir ----------
+    // Letras: A-Z, a-z y las letras con tilde, diéresis o ñ (À-ÿ, sin × ni ÷).
+    // Son las mismas que acepta el código de Google Apps Script.
+    const soloLetras = (s: string) =>
+      s
+        .replace(/[^A-Za-zÀ-ÖØ-öø-ÿ' -]/g, '') // letras, espacio, apóstrofo y guion
+        .replace(/^[ '-]+/, '') // no puede empezar con espacio, apóstrofo ni guion
+        .replace(/ {2,}/g, ' ') // sin espacios dobles
+        .replace(/([-'])[-']+/g, '$1');
+    const soloDigitos = (maximo: number) => (s: string) => s.replace(/\D/g, '').slice(0, maximo);
+    const sinEspacios = (s: string) => s.replace(/\s/g, '');
+
+    function filtrar(entrada: HTMLInputElement, limpiar: (s: string) => string) {
+      entrada.addEventListener('input', () => {
+        const antes = entrada.value;
+        const limpio = limpiar(antes);
+        if (limpio === antes) return;
+        // Deja el cursor donde estaba, descontando lo que se quitó antes de él
+        const cursor = limpiar(antes.slice(0, entrada.selectionStart ?? antes.length)).length;
+        entrada.value = limpio;
+        entrada.setSelectionRange(cursor, cursor);
+      });
+    }
+    filtrar(nombre, soloLetras);
+    filtrar(apellido, soloLetras);
+    filtrar(pais, soloLetras);
+    filtrar(telefono, soloDigitos(10));
+    filtrar(edad, soloDigitos(3));
+    filtrar(correo, sinEspacios);
+
+    // ---------- 2. Correcciones al salir del campo ----------
+    // "maría  DE los ángeles" → "María de los Ángeles"
+    const enMinuscula = new Set(['de', 'del', 'la', 'las', 'los', 'y', 'e']);
+    const nombrePropio = (s: string) =>
+      s
+        .trim()
+        .replace(/[ '-]+$/, '')
+        .toLocaleLowerCase('es')
+        .split(' ')
+        .map((palabra, i) =>
+          i > 0 && enMinuscula.has(palabra)
+            ? palabra
+            : palabra.replace(/(^|[-'])([a-zà-öø-ÿ])/g, (_, antes, letra) => antes + letra.toLocaleUpperCase('es')),
+        )
+        .join(' ');
+
+    const corregir = new Map<Campo, (s: string) => string>([
+      [nombre, nombrePropio],
+      [apellido, nombrePropio],
+      [pais, nombrePropio],
+      [correo, (s) => s.trim().toLocaleLowerCase('es')],
+    ]);
+
+    // ---------- 3. Reglas: mensaje de error, o '' si el dato está bien ----------
+    const contarLetras = (s: string) => (s.match(/[A-Za-zÀ-ÖØ-öø-ÿ]/g) ?? []).length;
+    const enColombia = () => departamento.value !== 'otro';
+
+    const reglas = new Map<Campo, () => string>([
+      [nombre, () => (!nombre.value ? 'Escribe tu nombre.' : contarLetras(nombre.value) < 2 ? 'El nombre debe tener al menos 2 letras.' : '')],
+      [apellido, () => (!apellido.value ? 'Escribe tu apellido.' : contarLetras(apellido.value) < 2 ? 'El apellido debe tener al menos 2 letras.' : '')],
+      [
+        telefono,
+        () =>
+          !telefono.value
+            ? 'Escribe tu número de teléfono.'
+            : !/^(3\d{9}|60\d{8})$/.test(telefono.value)
+              ? 'Debe tener 10 dígitos y empezar por 3 (celular) o por 60 (fijo).'
+              : '',
+      ],
+      [
+        correo,
+        () =>
+          !correo.value
+            ? 'Escribe tu correo electrónico.'
+            : !/^[a-z0-9._%+-]+@[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}$/.test(correo.value) || correo.value.includes('..')
+              ? 'Revisa el correo: debe ser como nombre@gmail.com.'
+              : '',
+      ],
+      [
+        edad,
+        () => {
+          if (!edad.value) return 'Escribe tu edad.';
+          const n = Number(edad.value);
+          return n < edadMin || n > edadMax ? `Escribe una edad entre ${edadMin} y ${edadMax} años.` : '';
+        },
+      ],
+      [departamento, () => (!departamento.value ? 'Elige el departamento donde naciste.' : '')],
+      [municipio, () => (enColombia() && !municipio.value ? 'Elige el municipio donde naciste.' : '')],
+      [pais, () => (!enColombia() && contarLetras(pais.value) < 3 ? 'Escribe el país donde naciste.' : '')],
+    ]);
+
+    function mostrar(c: Campo, mensaje: string) {
+      c.setAttribute('aria-invalid', mensaje ? 'true' : 'false');
+      formulario.querySelector<HTMLElement>(`#${c.id}-error`)!.textContent = mensaje;
+    }
+    const validar = (c: Campo) => {
+      const mensaje = c.disabled ? '' : reglas.get(c)!();
+      mostrar(c, mensaje);
+      return !mensaje;
+    };
+
+    for (const c of reglas.keys()) {
+      // Al salir del campo: se corrige y, si ya tiene algo escrito, se revisa
+      c.addEventListener('blur', () => {
+        const arreglar = corregir.get(c);
+        if (arreglar) c.value = arreglar(c.value);
+        if (c.value || c.getAttribute('aria-invalid') === 'true') validar(c);
+      });
+      // Si el campo estaba marcado con error, se vuelve a revisar mientras se corrige
+      c.addEventListener(c instanceof HTMLSelectElement ? 'change' : 'input', () => {
+        if (c.getAttribute('aria-invalid') === 'true') validar(c);
+      });
+    }
+
+    // ---------- 4. Departamento → municipios ----------
+    function cambiarDepartamento() {
+      const codigo = departamento.value;
+      const lista = municipiosPorDepartamento.get(codigo) ?? [];
+      const fuera = codigo === 'otro';
+
+      campoMunicipio.hidden = fuera;
+      campoPais.hidden = !fuera;
+      pais.disabled = !fuera;
+      municipio.disabled = !lista.length;
+      municipio.replaceChildren(
+        new Option(lista.length ? 'Elige un municipio' : 'Primero elige el departamento', ''),
+        ...lista.map(([cod, nom]) => new Option(nom, cod)),
+      );
+      // Bogotá tiene un solo "municipio": se elige solo
+      if (lista.length === 1) municipio.value = lista[0][0];
+      mostrar(municipio, '');
+      mostrar(pais, '');
+    }
+    departamento.addEventListener('change', cambiarDepartamento);
+
+    // ---------- 5. Enviar ----------
+    formulario.addEventListener('submit', async (evento) => {
+      evento.preventDefault();
+      estado.classList.remove('con-errores');
+
+      for (const [c, arreglar] of corregir) c.value = arreglar(c.value);
+      const invalidos = [...reglas.keys()].filter((c) => !validar(c));
+      if (invalidos.length) {
+        estado.classList.add('con-errores');
+        estado.textContent =
+          invalidos.length === 1 ? 'Revisa el campo marcado.' : `Revisa los ${invalidos.length} campos marcados.`;
+        invalidos[0].focus();
+        return;
+      }
+
+      const destino = formulario.dataset.destino;
+      if (!destino) {
+        estado.textContent = 'El formulario todavía no está conectado.';
+        return;
+      }
+
+      const colombia = enColombia();
+      const datos = new URLSearchParams({
+        formulario: 'validado',
+        nombre: nombre.value,
+        apellido: apellido.value,
+        telefono: telefono.value,
+        correo: correo.value,
+        edad: edad.value,
+        pais_nacimiento: colombia ? 'Colombia' : pais.value,
+        departamento_nacimiento: colombia ? departamento.selectedOptions[0].text : '',
+        municipio_nacimiento: colombia ? municipio.selectedOptions[0].text : '',
+        codigo_municipio: colombia ? municipio.value : '',
+      });
+
+      boton.disabled = true;
+      estado.textContent = 'Enviando…';
+      try {
+        // "no-cors": Google no deja leer su respuesta, pero los datos sí llegan a la hoja
+        await fetch(destino, { method: 'POST', mode: 'no-cors', body: datos });
+        formulario.reset();
+        cambiarDepartamento();
+        for (const c of reglas.keys()) c.removeAttribute('aria-invalid');
+        estado.textContent = '¡Gracias! Tus datos se enviaron.';
+      } catch {
+        estado.classList.add('con-errores');
+        estado.textContent = 'No se pudieron enviar los datos. Revisa tu conexión e inténtalo de nuevo.';
+      } finally {
+        boton.disabled = false;
+      }
+    });
+  }
+</script>

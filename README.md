@@ -204,7 +204,39 @@ La lección 1.1 tiene un ejemplo de cada una: la comparativa en la lección y la
 
 **Resaltar una celda.** Si escribes una celda completa en negrita (`| **Lidera** |`), se resalta con el color del módulo. No aplica a la primera columna. Ejemplo: la tabla de roles de la lección 1.3.
 
-**Tablas anchas.** Las tablas de 5 columnas o más usan en computador todo el ancho de la página, no solo el del texto. En celular, todas las tablas de datos se desplazan de lado.
+**Tablas anchas.** Las tablas de 5 columnas o más usan en computador todo el ancho de la página, no solo el del texto. En celular, todas las tablas de datos se desplazan de lado. Para que una tabla con menos columnas también use todo el ancho, enciérrala así (con las líneas en blanco):
+
+```markdown
+<div class="tabla-ancha">
+
+| Columna A | Columna B |
+| --- | --- |
+| … | … |
+
+</div>
+```
+
+**Etiquetas de color y rutas de menú en una tabla.** Ejemplo: la tabla "Herramientas para validar datos" de la lección 1.4.
+
+- `<span class="etiqueta-tipo tipo-preventiva">Preventiva</span>` sale en verde y `<span class="etiqueta-tipo tipo-revision">Revisión</span>` en cian.
+- `<span class="ruta-menu">(Datos > Validación de datos)</span>` sale en cursiva, gris y en su propia línea.
+
+**Dos tarjetas lado a lado** (una debajo de otra en celular), con los mismos colores verde y cian:
+
+```markdown
+<div class="tipos-validacion">
+<div class="tipo-validacion tipo-preventiva">
+
+**Título de la primera:** texto.
+
+</div>
+<div class="tipo-validacion tipo-revision">
+
+**Título de la segunda:** texto.
+
+</div>
+</div>
+```
 
 **Espacios visibles.** Dentro de código (entre comillas invertidas), el símbolo ␣ se dibuja como un hueco claro para que no se confunda con un guion bajo. Ejemplo: `` `LAS␣␣ESTANCIAS` `` en la lección 1.4.
 
@@ -253,6 +285,10 @@ Aquí va la ayuda. Puede tener varios párrafos.
 ```
 
 **Enlaces a otros sitios.** Escríbelos normal: `[datos.gov.co](https://www.datos.gov.co)`. Todo enlace que empiece por `http://` o `https://` se abre en una pestaña nueva y lleva una flecha ↗.
+
+**Enlaces a páginas del curso.** Empieza la dirección con `/`, por ejemplo `[Formulario de estudiantes](/formulario/)`. El sitio le agrega la carpeta base de GitHub Pages solo.
+
+**Enlace como botón.** Escribe `"botón"` entre comillas después de la dirección: `[Abrir el formulario de estudiantes](/formulario/ "botón")`. Ejemplo: la lección 1.4, debajo de la caja "Haz la prueba".
 
 ### Agregar actividades a una lección
 
@@ -433,9 +469,26 @@ El archivo `netlify.toml` ya está listo. En [netlify.com](https://www.netlify.c
 
 ## 10. Formulario de estudiantes
 
-La página `/formulario/` del sitio (por ejemplo `https://tu-sitio/formulario/`) tiene un formulario con nombre, apellido, número de teléfono, correo electrónico, edad y lugar de nacimiento. No está enlazada en el menú: comparte la dirección con tus estudiantes.
+El sitio tiene dos formularios con los mismos datos: nombre, apellido, número de teléfono, correo electrónico, edad y lugar de nacimiento. No están enlazados en el menú: comparte la dirección con tus estudiantes. Los dos guardan las respuestas en la misma hoja de Google Sheets, en pestañas distintas, para comparar los datos sucios con los limpios.
 
-**No valida nada.** Todos los campos son de texto libre, ninguno es obligatorio y el celular no corrige lo que escriben. Las respuestas se guardan en una hoja de Google Sheets **tal como las escribieron**, como texto: Google Sheets no las convierte en números ni en fechas. Así quedan "sucias" para practicar limpieza de datos.
+| Página | Qué hace | Dónde guarda |
+| --- | --- | --- |
+| `/formulario/` | **No valida nada.** Todos los campos son de texto libre, ninguno es obligatorio y el celular no corrige lo que escriben. Las respuestas se guardan **tal como las escribieron**, como texto: Google Sheets no las convierte en números ni en fechas. | Primera pestaña de la hoja |
+| `/formulario-validado/` | **Valida cada campo.** Todos son obligatorios; cada uno solo deja escribir lo que corresponde, corrige mayúsculas y espacios al salir del campo y muestra un mensaje si algo está mal. El lugar de nacimiento se elige de la lista oficial de municipios de Colombia. Google vuelve a revisar los datos antes de guardarlos. | Pestaña "Datos validados" |
+
+**Reglas del formulario con validación:**
+
+| Campo | Qué se puede escribir | Qué se corrige solo | Qué se exige |
+| --- | --- | --- | --- |
+| Nombre y apellido | Letras (con tildes y ñ), espacio, apóstrofo y guion | Espacios de más; mayúscula inicial (`maría DE los ángeles` → `María de los Ángeles`) | Al menos 2 letras; máximo 40 caracteres |
+| Número de teléfono | Solo dígitos, máximo 10 | Si pegan `300 123 4567`, quedan solo los dígitos | 10 dígitos que empiecen por 3 (celular) o por 60 (fijo) |
+| Correo electrónico | Cualquier cosa sin espacios | Minúsculas | Forma `nombre@dominio.com` |
+| Edad | Solo dígitos, máximo 3 | — | Entre 10 y 100 |
+| Lugar de nacimiento | Se elige de una lista: departamento y municipio, o "Nací fuera de Colombia" y el país | Mayúscula inicial en el país | Elegir una opción |
+
+La edad mínima y máxima se cambian en `src/pages/formulario-validado.astro` (`EDAD`) y en el código de Apps Script (`EDAD_MIN` y `EDAD_MAX`). La lista de municipios está en `src/data/municipios-colombia.json` y viene de la DIVIPOLA del DANE (portal datos.gov.co).
+
+En la pestaña "Datos validados", además del departamento y el municipio, se guarda el **código DIVIPOLA** del municipio (por ejemplo `05001` para Medellín), que sirve para cruzar con otras tablas.
 
 ### Conectarlo a Google Sheets (una sola vez, unos 5 minutos)
 
@@ -444,25 +497,31 @@ La página `/formulario/` del sitio (por ejemplo `https://tu-sitio/formulario/`)
 3. Borra lo que aparece, pega este código y guarda (ícono de disquete):
 
    ```js
-   // Formulario de estudiantes → esta hoja de cálculo.
-   // Guarda los datos tal como los escriben, como texto: sin validar,
-   // sin corregir y sin que Google Sheets los convierta en números o fechas.
-   const COLUMNAS = ['nombre', 'apellido', 'telefono', 'correo', 'edad', 'lugar_nacimiento'];
+   // Formularios del curso → esta hoja de cálculo.
+   //
+   // - Formulario libre (/formulario/): guarda los datos tal como los escriben,
+   //   como texto, en la primera pestaña. No valida nada.
+   // - Formulario con validación (/formulario-validado/): vuelve a revisar los
+   //   datos (nunca hay que confiar solo en lo que revisa el navegador) y guarda
+   //   los que cumplen las reglas en la pestaña "Datos validados".
+
+   const COLUMNAS_LIBRE = ['nombre', 'apellido', 'telefono', 'correo', 'edad', 'lugar_nacimiento'];
+   const COLUMNAS_VALIDADAS = ['nombre', 'apellido', 'telefono', 'correo', 'edad',
+     'pais_nacimiento', 'departamento_nacimiento', 'municipio_nacimiento', 'codigo_municipio'];
+   const HOJA_VALIDADA = 'Datos validados';
+   const EDAD_MIN = 10;
+   const EDAD_MAX = 100;
 
    function doPost(e) {
+     const datos = (e && e.parameter) || {};
      const candado = LockService.getScriptLock();
      candado.waitLock(10000);
      try {
-       const hoja = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
-       if (hoja.getLastRow() === 0) {
-         hoja.appendRow(['fecha_envio'].concat(COLUMNAS));
+       if (datos.formulario === 'validado') {
+         guardarValidado(datos);
+       } else {
+         guardarLibre(datos);
        }
-       // El apóstrofo inicial hace que Google Sheets guarde el valor como texto, tal cual
-       const valores = COLUMNAS.map(function (columna) {
-         const valor = (e && e.parameter && e.parameter[columna]) || '';
-         return valor === '' ? '' : "'" + valor;
-       });
-       hoja.appendRow([new Date()].concat(valores));
      } finally {
        candado.releaseLock();
      }
@@ -471,15 +530,73 @@ La página `/formulario/` del sitio (por ejemplo `https://tu-sitio/formulario/`)
 
    // Si abres la dirección en el navegador, confirma que está funcionando
    function doGet() {
-     return HtmlService.createHtmlOutput('<p>El formulario está conectado.</p>');
+     return HtmlService.createHtmlOutput('<p>El formulario está conectado (versión 2).</p>');
+   }
+
+   // El apóstrofo inicial hace que Google Sheets guarde el valor como texto, tal cual
+   function comoTexto(valor) {
+     return valor === '' ? '' : "'" + valor;
+   }
+
+   // Pestaña donde se guarda; si está vacía, primero escribe los encabezados
+   function pestana(nombre, columnas) {
+     const libro = SpreadsheetApp.getActiveSpreadsheet();
+     const hoja = nombre
+       ? libro.getSheetByName(nombre) || libro.insertSheet(nombre, libro.getNumSheets())
+       : libro.getSheets()[0];
+     if (hoja.getLastRow() === 0) {
+       hoja.appendRow(['fecha_envio'].concat(columnas));
+     }
+     return hoja;
+   }
+
+   function guardarLibre(datos) {
+     const valores = COLUMNAS_LIBRE.map(function (columna) {
+       return comoTexto(datos[columna] || '');
+     });
+     pestana(null, COLUMNAS_LIBRE).appendRow([new Date()].concat(valores));
+   }
+
+   function guardarValidado(datos) {
+     const v = {};
+     COLUMNAS_VALIDADAS.forEach(function (columna) {
+       v[columna] = String(datos[columna] || '').trim();
+     });
+     if (!esValido(v)) return; // si no cumple las reglas, no se guarda
+     const fila = COLUMNAS_VALIDADAS.map(function (columna) {
+       return columna === 'edad' ? Number(v.edad) : comoTexto(v[columna]);
+     });
+     pestana(HOJA_VALIDADA, COLUMNAS_VALIDADAS).appendRow([new Date()].concat(fila));
+   }
+
+   // Las mismas reglas del formulario con validación
+   function esValido(v) {
+     const nombre = /^[A-Za-zÀ-ÖØ-öø-ÿ][A-Za-zÀ-ÖØ-öø-ÿ' -]*$/;
+     const letras = function (texto) {
+       return (texto.match(/[A-Za-zÀ-ÖØ-öø-ÿ]/g) || []).length;
+     };
+     const edad = Number(v.edad);
+     const enColombia = v.pais_nacimiento === 'Colombia';
+     return (
+       nombre.test(v.nombre) && letras(v.nombre) >= 2 && v.nombre.length <= 40 &&
+       nombre.test(v.apellido) && letras(v.apellido) >= 2 && v.apellido.length <= 40 &&
+       /^(3\d{9}|60\d{8})$/.test(v.telefono) &&
+       /^[a-z0-9._%+-]+@[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}$/.test(v.correo) &&
+       v.correo.indexOf('..') === -1 &&
+       /^\d{1,3}$/.test(v.edad) && edad >= EDAD_MIN && edad <= EDAD_MAX &&
+       (enColombia
+         ? v.departamento_nacimiento !== '' && v.municipio_nacimiento !== '' &&
+           /^\d{5}$/.test(v.codigo_municipio)
+         : nombre.test(v.pais_nacimiento) && letras(v.pais_nacimiento) >= 3)
+     );
    }
    ```
 
 4. Arriba a la derecha, haz clic en **Implementar → Nueva implementación**. En el engranaje de "Seleccionar tipo", elige **Aplicación web** y configura:
    - **Ejecutar como:** Yo.
-   - **Quién tiene acceso:** Cualquier persona.
+   - **Quién tiene acceso:** Cualquier persona (no "Cualquier persona con cuenta de Google").
 5. Haz clic en **Implementar** y autoriza el acceso con tu cuenta de Google. Si aparece "Google no verificó esta app", entra a **Configuración avanzada → Ir a … (no seguro)**: es tu propio código.
-6. Copia la **URL de la aplicación web** (termina en `/exec`). Si la abres en el navegador, debe decir "El formulario está conectado".
+6. Copia la **URL de la aplicación web** (termina en `/exec`). Si la abres en el navegador, debe decir "El formulario está conectado (versión 2)".
 7. Pégala en `src/config/curso.ts`:
 
    ```ts
@@ -490,13 +607,17 @@ La página `/formulario/` del sitio (por ejemplo `https://tu-sitio/formulario/`)
 
 8. Guarda y publica el sitio. Desde ese momento, cada envío agrega una fila a la hoja.
 
-Mientras `urlGoogle` esté vacío, la página muestra un aviso de que el formulario no está conectado.
+Mientras `urlGoogle` esté vacío, las dos páginas muestran un aviso de que el formulario no está conectado.
+
+**Pon la hoja en la hora de Colombia:** en Google Sheets, **Archivo → Configuración → Zona horaria → (GMT-05:00) Bogotá**. Si no, `fecha_envio` puede salir con la hora de otro país.
+
+### Cambiar el código de Apps Script
+
+Pega el código nuevo, guarda y publica una versión nueva: **Implementar → Gestionar implementaciones → editar (lápiz) → Versión: Nueva versión → Implementar**. Así la URL no cambia y no hay que tocar el sitio.
 
 ### Descargar los datos
 
-En la hoja de Google: **Archivo → Descargar → Valores separados por comas (.csv)**. La primera columna, `fecha_envio`, la agrega la hoja con la fecha y hora de cada envío.
-
-Si cambias el código de Apps Script, publica una versión nueva: **Implementar → Gestionar implementaciones → editar (lápiz) → Versión: Nueva versión**. Así la URL no cambia.
+En la hoja de Google, abre la pestaña que quieras y ve a **Archivo → Descargar → Valores separados por comas (.csv)**. Se descarga solo la pestaña abierta. La primera columna, `fecha_envio`, la agrega la hoja con la fecha y hora de cada envío.
 
 ---
 
