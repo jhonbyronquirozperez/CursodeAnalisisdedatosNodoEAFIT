@@ -78,7 +78,7 @@ Casi todos los problemas de limpieza caen en esta lista. Para cada uno hay una f
 | Unidades equivocadas | Área en grados al cuadrado | Convertir y dejar la unidad en el nombre de la columna | `=H2*12236` | `df["area_km2"] = df["Shape__Area"] * 12236` |
 
 
-## Ejercicio pràctico
+## Ejercicio práctico
 [Abrir el formulario de estudiantes](/formulario/ "botón")
 
 La validación de datos es un proceso fundamental para garantizar la calidad y limpieza de la información desde el momento en que se captura. Su objetivo es evitar que ingresen datos incorrectos, incompletos, duplicados o inconsistentes a un sistema, aplicando reglas que permitan verificar formatos, campos obligatorios, rangos y coherencia de la información. Esto reduce la necesidad de realizar procesos de limpieza posteriores, facilita el análisis y procesamiento de los datos y garantiza que la información almacenada sea confiable, precisa y útil para la toma de decisiones. En otras palabras, una buena calidad de datos comienza con una correcta validación desde su origen.

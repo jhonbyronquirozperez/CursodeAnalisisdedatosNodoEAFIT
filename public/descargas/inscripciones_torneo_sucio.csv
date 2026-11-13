@@ -1,0 +1,17 @@
+id_inscripcion,nombre,documento,edad,genero,ciudad,colegio,deporte,fecha_inscripcion,correo,telefono
+1,Valentina Restrepo,1034567890,15,F,Medellín,I.E. San José,Fútbol,2026-10-01,valentina.r@correo.com,3001234567
+2,Santiago Gómez,1029876543,16,Masculino,Medellin,IE San José,Baloncesto,01/10/2026,santiago.g@correo.com,300 765 4321
+3,Mariana Ospina,1031122334,quince,femenino,MEDELLIN,Institución Educativa San José,Voleibol,2026/10/02,mariana.ospina@correo.com,+57 3104455667
+4,Juan Pablo Arango,1035566778,17,M,Bello,Colegio La Salle,Futbol,2026-10-02,juanpablo.arango.correo.com,3205566778
+5,isabella zapata,1037788990,14,F,Envigado,Colegio La Salle,fútbol ,02/10/2026,isabella.z@correo.com,311-778-8990
+2,Santiago Gómez,1029876543,16,Masculino,Medellin,IE San José,Baloncesto,01/10/2026,santiago.g@correo.com,300 765 4321
+6,Samuel Cardona,1.038.899.001,16,m,Itagui,Colegio Santa María,Fútbol,2026-10-02,samuel.c@correo.com,3018899001
+7,Sara Montoya,1030011223,150,Femenino,Medellín,I.E. San José,Baloncesto,2026-10-03,sara.montoya@correo.com,3012233445
+8,Mateo  Hincapié,1032233445,15,Masculino,Itagüí,Colegio Santa María,Voleibol,3 oct 2026,,3023344556
+9,Antonella Vélez,1034455667,,F,Envigado,Colegio Santa María,Volleyball,2026-10-03,antonella.v@correo.com,3034455667
+10,Valentina Restrepo,1034567890,15,F,Medellín,I.E. San José,Fútbol,2026-10-04,valentina.r@correo.com,3001234567
+11,Tomás Builes,1036677889,17,Masculino, Medellín,Colegio La Salle,baloncesto,2026-10-04,tomas.b@correo.com,3046677889
+12,Luciana Correa,1037788001,14,Femenino,Bello,I.E. San Jose,Fútbol,04/10/2026,luciana.c@correo.com,3057788001
+13,Emiliano Rivera,1038899112,16,M,Medellín,IE San Jose,Futbol,2026-10-05,emiliano.rivera@correo.com,300 889 9112
+14,Salomé Agudelo,1039900223,15,F,Itagüí,Colegio Santa María,voleibol,2026-10-05,salome.a@correo,3069900223
+15,Jerónimo Castaño,1030123456,18,Masculino,Envigado,Colegio La Salle,Baloncesto,2026-10-06,jeronimo.c@correo.com,3070123456
