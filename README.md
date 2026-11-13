@@ -201,6 +201,8 @@ Texto normal, **negrita**, *cursiva* y `código en línea`.
 
 La lección 1.1 tiene un ejemplo de cada una: la comparativa en la lección y la de datos en su actividad.
 
+**Resaltar una celda.** Si escribes una celda completa en negrita (`| **Lidera** |`), se resalta con el color del módulo. No aplica a la primera columna. Ejemplo: la tabla de roles de la lección 1.3.
+
 **Pregunta para la clase con respuesta oculta.** Copia este bloque y cambia el texto. Deja las líneas en blanco tal como están: sin ellas, el texto de adentro no se convierte en negrita, párrafos, etc.
 
 ```markdown
@@ -221,6 +223,19 @@ Aquí va la respuesta. Puede tener varios párrafos.
 ```
 
 Se ve como una caja destacada; la respuesta aparece cuando el estudiante hace clic en "Ver respuesta". Si quieres dejar solo la pregunta, borra desde `<details>` hasta `</details>` (así está la lección 1.2).
+
+**Caja de ayuda (pista) desplegable.** Se muestra cerrada y el estudiante decide si la abre. Copia este bloque y cambia el texto, dejando las líneas en blanco como están. Adentro puedes poner listas, negritas y bloques de código. Ejemplo: la actividad de la lección 1.3.
+
+```markdown
+<details class="pista">
+<summary>💡 Ayuda: título de la pista</summary>
+
+Aquí va la ayuda. Puede tener varios párrafos.
+
+</details>
+```
+
+**Enlaces a otros sitios.** Escríbelos normal: `[datos.gov.co](https://www.datos.gov.co)`. Todo enlace que empiece por `http://` o `https://` se abre en una pestaña nueva y lleva una flecha ↗.
 
 ### Agregar actividades a una lección
 
@@ -312,6 +327,18 @@ Guarda el archivo. La etiqueta de la lección cambia a **Lista** y se actualizan
 - La ruta empieza con `./` porque es relativa al archivo de la lección.
 - Astro optimiza la imagen automáticamente (la comprime y la convierte a un formato liviano).
 - Para imágenes en la práctica de un módulo, usa `src/content/modulos/imagenes/` y la ruta `./imagenes/archivo.png`.
+
+### GIF animados o imágenes que todavía no tienes
+
+Guárdalos en `public/imagenes/` y escribe la ruta empezando con `/imagenes/`. El texto entre comillas es el que se ve en un recuadro mientras el archivo no exista:
+
+```markdown
+![Animación del ciclo de vida de un proyecto de datos](/imagenes/ciclo_vida_datos.gif "Aquí va la animación del ciclo de vida")
+```
+
+- La imagen ocupa todo el ancho del contenido y se ajusta en celular.
+- Astro no convierte estos archivos, así que los GIF conservan la animación. Procura que pesen poco (idealmente menos de 2 MB).
+- Cuando copies el archivo a `public/imagenes/`, la imagen reemplaza al recuadro sola; no hay que cambiar la lección.
 
 ---
 

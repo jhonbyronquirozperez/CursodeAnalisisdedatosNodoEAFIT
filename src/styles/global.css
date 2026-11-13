@@ -336,6 +336,62 @@ img {
   padding-bottom: 0;
 }
 
+/* Pista desplegable: cerrada por defecto; el estudiante decide si la abre.
+   En Markdown: <details class="pista"><summary>💡 Ayuda: …</summary> … </details> */
+.prosa .pista {
+  margin: 1.5rem 0;
+  border: 1px solid color-mix(in srgb, var(--mod, var(--cian)) 40%, transparent);
+  border-left: 3px solid var(--mod, var(--cian));
+  background: var(--mod-fondo, var(--fondo-suave));
+}
+.prosa .pista summary {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1.1rem;
+  font-weight: 700;
+  color: #ffffff;
+  cursor: pointer;
+  list-style: none;
+  transition: background-color 0.2s;
+}
+.prosa .pista summary::-webkit-details-marker {
+  display: none;
+}
+.prosa .pista summary::after {
+  content: '▸';
+  content: '▸' / '';
+  margin-left: auto;
+  color: var(--mod, var(--cian));
+  transition: transform 0.2s;
+}
+.prosa .pista summary:hover {
+  background: color-mix(in srgb, var(--mod, var(--cian)) 10%, transparent);
+}
+.prosa .pista[open] summary {
+  margin-bottom: 1.1rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--mod, var(--cian)) 25%, transparent);
+}
+.prosa .pista[open] summary::after {
+  transform: rotate(90deg);
+}
+.prosa .pista > :not(summary) {
+  margin-inline: 1.1rem;
+}
+.prosa .pista > :last-child {
+  margin-bottom: 1.1rem;
+}
+
+/* Enlaces a otros sitios (src/lib/enlaces-markdown.mjs): se abren en una
+   pestaña nueva y llevan una flecha. Las direcciones largas se parten en celular. */
+.prosa a {
+  overflow-wrap: break-word;
+}
+.prosa a[target='_blank']::after {
+  content: ' ↗';
+  content: ' ↗' / '';
+}
+
 .prosa table {
   border-collapse: collapse;
   width: 100%;
@@ -367,6 +423,13 @@ img {
   font-family: inherit;
   font-size: inherit;
   color: var(--texto);
+}
+/* Celda escrita toda en negrita, como **Lidera** (src/lib/tablas-markdown.mjs) */
+.prosa td.celda-destacada {
+  background: color-mix(in srgb, var(--mod, var(--cian)) 14%, transparent);
+}
+.prosa .celda-destacada strong {
+  color: var(--mod, var(--cian));
 }
 
 @media (max-width: 640px) {
@@ -434,7 +497,7 @@ img {
   }
 }
 /* Botón de descarga: enlaces de Markdown a public/descargas/
-   (src/lib/descargas-markdown.mjs) */
+   (src/lib/enlaces-markdown.mjs) */
 .prosa .boton-descarga {
   display: inline-flex;
   align-items: center;
@@ -463,6 +526,34 @@ img {
 .prosa img {
   border: 1px solid var(--borde);
   margin: 0.5rem 0;
+}
+/* Imágenes de public/imagenes/ (src/lib/imagenes-markdown.mjs): ocupan el
+   ancho del contenido. Si el archivo no existe, se ve un recuadro de reemplazo. */
+.prosa .imagen-ancha {
+  display: block;
+  margin: 1.5rem 0;
+}
+.prosa .imagen-ancha img {
+  display: block;
+  width: 100%;
+  margin: 0;
+}
+.prosa .imagen-pendiente,
+.prosa .sin-archivo img {
+  display: none;
+}
+.prosa .sin-archivo .imagen-pendiente {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 16 / 9;
+  padding: 1.5rem;
+  border: 1px dashed color-mix(in srgb, var(--mod, var(--cian)) 55%, transparent);
+  background: var(--mod-fondo, var(--fondo-suave));
+  color: var(--texto-suave);
+  font-family: var(--fuente-codigo);
+  font-size: 0.85rem;
+  text-align: center;
 }
 .prosa hr {
   border: 0;

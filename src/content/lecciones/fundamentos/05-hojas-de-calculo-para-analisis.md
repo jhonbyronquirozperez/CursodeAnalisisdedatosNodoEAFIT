@@ -1,7 +1,7 @@
 ---
 titulo: "Hojas de cálculo para análisis"
 modulo: fundamentos
-orden: 6
+orden: 5
 estado: por-preparar
 ---
 
